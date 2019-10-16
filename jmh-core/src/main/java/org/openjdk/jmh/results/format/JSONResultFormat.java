@@ -57,6 +57,9 @@ class JSONResultFormat implements ResultFormat {
 
         boolean first = true;
 
+        // TODO
+        boolean reconfigure = false;
+
         pw.println("[");
         for (RunResult runResult : results) {
             BenchmarkParams params = runResult.getParams();
@@ -74,6 +77,13 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"mode\" : \"" + params.getMode().shortLabel() + "\",");
             pw.println("\"threads\" : " + params.getThreads() + ",");
             pw.println("\"forks\" : " + params.getForks() + ",");
+            if (reconfigure){
+                pw.println("\"minforks\" : " + params.getMinForks() + ",");
+            }
+            pw.println("\"warmupForks\" : " + params.getWarmupForks() + ",");
+            if (reconfigure){
+                pw.println("\"minWarmupForks\" : " + params.getMinWarmupForks() + ",");
+            }
             pw.println("\"jvm\" : " + toJsonString(params.getJvm()) + ",");
             // if empty, write an empty array.
             pw.println("\"jvmArgs\" : [");
@@ -83,9 +93,15 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"vmName\" : " + toJsonString(params.getVmName()) + ",");
             pw.println("\"vmVersion\" : " + toJsonString(params.getVmVersion()) + ",");
             pw.println("\"warmupIterations\" : " + params.getWarmup().getCount() + ",");
+            if (reconfigure){
+                pw.println("\"minWarmupIterations\" : " + params.getWarmup().getMinCount() + ",");
+            }
             pw.println("\"warmupTime\" : \"" + params.getWarmup().getTime() + "\",");
             pw.println("\"warmupBatchSize\" : " + params.getWarmup().getBatchSize() + ",");
             pw.println("\"measurementIterations\" : " + params.getMeasurement().getCount() + ",");
+            if (reconfigure){
+                pw.println("\"minMeasurementIterations\" : " + params.getMeasurement().getMinCount() + ",");
+            }
             pw.println("\"measurementTime\" : \"" + params.getMeasurement().getTime() + "\",");
             pw.println("\"measurementBatchSize\" : " + params.getMeasurement().getBatchSize() + ",");
 

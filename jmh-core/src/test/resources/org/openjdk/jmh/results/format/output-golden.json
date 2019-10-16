@@ -5,6 +5,7 @@
         "mode" : "thrpt",
         "threads" : 80,
         "forks" : 828,
+        "warmupForks" : 55,
         "jvm" : "javadummy",
         "jvmArgs" : [
         ],
@@ -228,6 +229,7 @@
         "mode" : "thrpt",
         "threads" : 900,
         "forks" : 364,
+        "warmupForks" : 275,
         "jvm" : "javadummy",
         "jvmArgs" : [
         ],
@@ -334,6 +336,7 @@
         "mode" : "thrpt",
         "threads" : 466,
         "forks" : 677,
+        "warmupForks" : 750,
         "jvm" : "javadummy",
         "jvmArgs" : [
         ],
@@ -502,6 +505,7 @@
         "mode" : "thrpt",
         "threads" : 968,
         "forks" : 581,
+        "warmupForks" : 856,
         "jvm" : "javadummy",
         "jvmArgs" : [
         ],
@@ -702,6 +706,7 @@
         "mode" : "thrpt",
         "threads" : 739,
         "forks" : 670,
+        "warmupForks" : 338,
         "jvm" : "javadummy",
         "jvmArgs" : [
         ],
