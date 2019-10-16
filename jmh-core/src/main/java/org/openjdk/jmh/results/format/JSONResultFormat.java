@@ -78,7 +78,7 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"threads\" : " + params.getThreads() + ",");
             pw.println("\"forks\" : " + params.getForks() + ",");
             if (reconfigure){
-                pw.println("\"minforks\" : " + params.getMinForks() + ",");
+                pw.println("\"minForks\" : " + params.getMinForks() + ",");
             }
             pw.println("\"warmupForks\" : " + params.getWarmupForks() + ",");
             if (reconfigure){

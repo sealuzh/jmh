@@ -170,7 +170,7 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
      * @return number of iterations of given type.
      */
     public int getMinCount() {
-        return count;
+        return minCount;
     }
 
     /**
@@ -215,7 +215,7 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
 
     @Override
     public String toString() {
-        return "IterationParams("+ getCount()+", "+ getCount()+", "+ getTime()+", "+ getBatchSize()+")";
+        return "IterationParams("+ getCount()+", "+ getMinCount()+", "+ getTime()+", "+ getBatchSize()+")";
     }
 
 }

@@ -474,7 +474,7 @@ public class Runner extends BaseRunner {
                         Defaults.WARMUP_FORKS));
 
         int minWarmupForks = options.getMinWarmupForkCount().orElse(
-                benchmark.getWarmupForks().orElse(
+                benchmark.getMinWarmupForks().orElse(
                         Defaults.MIN_WARMUP_FORKS));
 
         TimeUnit timeUnit = options.getTimeUnit().orElse(
