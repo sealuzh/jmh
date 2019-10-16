@@ -45,13 +45,17 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     private final Optional<Collection<String>> threadGroupLabels;
     private final Optional<Integer> threads;
     private final Optional<Integer> warmupIterations;
+    private final Optional<Integer> minWarmupIterations;
     private final Optional<TimeValue> warmupTime;
     private final Optional<Integer> warmupBatchSize;
     private final Optional<Integer> measurementIterations;
+    private final Optional<Integer> minMeasurementIterations;
     private final Optional<TimeValue> measurementTime;
     private final Optional<Integer> measurementBatchSize;
     private final Optional<Integer> forks;
+    private final Optional<Integer> minForks;
     private final Optional<Integer> warmupForks;
+    private final Optional<Integer> minWarmupForks;
     private final Optional<String> jvm;
     private final Optional<Collection<String>> jvmArgs;
     private final Optional<Collection<String>> jvmArgsPrepend;
@@ -65,9 +69,9 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
 
     public BenchmarkListEntry(String userClassQName, String generatedClassQName, String method, Mode mode,
                               Optional<Integer> threads, int[] threadGroups, Optional<Collection<String>> threadGroupLabels,
-                              Optional<Integer> warmupIterations, Optional<TimeValue> warmupTime, Optional<Integer> warmupBatchSize,
-                              Optional<Integer> measurementIterations, Optional<TimeValue> measurementTime, Optional<Integer> measurementBatchSize,
-                              Optional<Integer> forks, Optional<Integer> warmupForks,
+                              Optional<Integer> warmupIterations, Optional<Integer> minWarmupIterations, Optional<TimeValue> warmupTime, Optional<Integer> warmupBatchSize,
+                              Optional<Integer> measurementIterations, Optional<Integer> minMeasurementIterations, Optional<TimeValue> measurementTime, Optional<Integer> measurementBatchSize,
+                              Optional<Integer> forks, Optional<Integer> minForks, Optional<Integer> warmupForks, Optional<Integer> minWarmupForks,
                               Optional<String> jvm, Optional<Collection<String>> jvmArgs, Optional<Collection<String>> jvmArgsPrepend, Optional<Collection<String>> jvmArgsAppend,
                               Optional<Map<String, String[]>> params, Optional<TimeUnit> tu, Optional<Integer> opsPerInv,
                               Optional<TimeValue> timeout) {
@@ -79,13 +83,17 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         this.threads = threads;
         this.threadGroupLabels = threadGroupLabels;
         this.warmupIterations = warmupIterations;
+        this.minWarmupIterations = minWarmupIterations;
         this.warmupTime = warmupTime;
         this.warmupBatchSize = warmupBatchSize;
         this.measurementIterations = measurementIterations;
+        this.minMeasurementIterations = minMeasurementIterations;
         this.measurementTime = measurementTime;
         this.measurementBatchSize = measurementBatchSize;
         this.forks = forks;
+        this.minForks = minForks;
         this.warmupForks = warmupForks;
+        this.minWarmupForks = minWarmupForks;
         this.jvm = jvm;
         this.jvmArgs = jvmArgs;
         this.jvmArgsPrepend = jvmArgsPrepend;
@@ -106,29 +114,33 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
             throw new IllegalStateException("Unable to parse the line: " + line);
         }
 
-        this.userClassQName         = reader.nextString();
-        this.generatedClassQName    = reader.nextString();
-        this.method                 = reader.nextString();
-        this.mode                   = Mode.deepValueOf(reader.nextString());
-        this.threads                = reader.nextOptionalInt();
-        this.threadGroups           = reader.nextIntArray();
-        this.threadGroupLabels      = reader.nextOptionalStringCollection();
-        this.warmupIterations       = reader.nextOptionalInt();
-        this.warmupTime             = reader.nextOptionalTimeValue();
-        this.warmupBatchSize        = reader.nextOptionalInt();
-        this.measurementIterations  = reader.nextOptionalInt();
-        this.measurementTime        = reader.nextOptionalTimeValue();
-        this.measurementBatchSize   = reader.nextOptionalInt();
-        this.forks                  = reader.nextOptionalInt();
-        this.warmupForks            = reader.nextOptionalInt();
-        this.jvm                    = reader.nextOptionalString();
-        this.jvmArgs                = reader.nextOptionalStringCollection();
-        this.jvmArgsPrepend         = reader.nextOptionalStringCollection();
-        this.jvmArgsAppend          = reader.nextOptionalStringCollection();
-        this.params                 = reader.nextOptionalParamCollection();
-        this.tu                     = reader.nextOptionalTimeUnit();
-        this.opsPerInvocation       = reader.nextOptionalInt();
-        this.timeout                = reader.nextOptionalTimeValue();
+        this.userClassQName             = reader.nextString();
+        this.generatedClassQName        = reader.nextString();
+        this.method                     = reader.nextString();
+        this.mode                       = Mode.deepValueOf(reader.nextString());
+        this.threads                    = reader.nextOptionalInt();
+        this.threadGroups               = reader.nextIntArray();
+        this.threadGroupLabels          = reader.nextOptionalStringCollection();
+        this.warmupIterations           = reader.nextOptionalInt();
+        this.minWarmupIterations        = reader.nextOptionalInt();
+        this.warmupTime                 = reader.nextOptionalTimeValue();
+        this.warmupBatchSize            = reader.nextOptionalInt();
+        this.measurementIterations      = reader.nextOptionalInt();
+        this.minMeasurementIterations   = reader.nextOptionalInt();
+        this.measurementTime            = reader.nextOptionalTimeValue();
+        this.measurementBatchSize       = reader.nextOptionalInt();
+        this.forks                      = reader.nextOptionalInt();
+        this.minForks                   = reader.nextOptionalInt();
+        this.warmupForks                = reader.nextOptionalInt();
+        this.minWarmupForks             = reader.nextOptionalInt();
+        this.jvm                        = reader.nextOptionalString();
+        this.jvmArgs                    = reader.nextOptionalStringCollection();
+        this.jvmArgsPrepend             = reader.nextOptionalStringCollection();
+        this.jvmArgsAppend              = reader.nextOptionalStringCollection();
+        this.params                     = reader.nextOptionalParamCollection();
+        this.tu                         = reader.nextOptionalTimeUnit();
+        this.opsPerInvocation           = reader.nextOptionalInt();
+        this.timeout                    = reader.nextOptionalTimeValue();
     }
 
     public String toLine() {
@@ -142,13 +154,17 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         writer.putIntArray(threadGroups);
         writer.putOptionalStringCollection(threadGroupLabels);
         writer.putOptionalInt(warmupIterations);
+        writer.putOptionalInt(minWarmupIterations);
         writer.putOptionalTimeValue(warmupTime);
         writer.putOptionalInt(warmupBatchSize);
         writer.putOptionalInt(measurementIterations);
+        writer.putOptionalInt(minMeasurementIterations);
         writer.putOptionalTimeValue(measurementTime);
         writer.putOptionalInt(measurementBatchSize);
         writer.putOptionalInt(forks);
+        writer.putOptionalInt(minForks);
         writer.putOptionalInt(warmupForks);
+        writer.putOptionalInt(minWarmupForks);
         writer.putOptionalString(jvm);
         writer.putOptionalStringCollection(jvmArgs);
         writer.putOptionalStringCollection(jvmArgsPrepend);
@@ -164,9 +180,9 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     public BenchmarkListEntry cloneWith(Mode mode) {
         return new BenchmarkListEntry(userClassQName, generatedClassQName, method, mode,
                 threads, threadGroups, threadGroupLabels,
-                warmupIterations, warmupTime, warmupBatchSize,
-                measurementIterations, measurementTime, measurementBatchSize,
-                forks, warmupForks,
+                minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
+                minMeasurementIterations, measurementIterations, measurementTime, measurementBatchSize,
+                forks, minForks, warmupForks, minWarmupForks,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
                 timeout);
@@ -175,9 +191,9 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     public BenchmarkListEntry cloneWith(WorkloadParams p) {
         BenchmarkListEntry br = new BenchmarkListEntry(userClassQName, generatedClassQName, method, mode,
                 threads, threadGroups, threadGroupLabels,
-                warmupIterations, warmupTime, warmupBatchSize,
-                measurementIterations, measurementTime, measurementBatchSize,
-                forks, warmupForks,
+                minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
+                minMeasurementIterations, measurementIterations, measurementTime, measurementBatchSize,
+                forks, minForks, warmupForks, minWarmupForks,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
                 timeout);
@@ -269,6 +285,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         return warmupIterations;
     }
 
+    public Optional<Integer> getMinWarmupIterations() {
+        return minWarmupIterations;
+    }
+
     public Optional<Integer> getWarmupBatchSize() {
         return warmupBatchSize;
     }
@@ -281,6 +301,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         return measurementIterations;
     }
 
+    public Optional<Integer> getMinMeasurementIterations() {
+        return minMeasurementIterations;
+    }
+
     public Optional<Integer> getMeasurementBatchSize() {
         return measurementBatchSize;
     }
@@ -289,8 +313,16 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         return forks;
     }
 
+    public Optional<Integer> getMinForks() {
+        return minForks;
+    }
+
     public Optional<Integer> getWarmupForks() {
         return warmupForks;
+    }
+
+    public Optional<Integer> getMinWarmupForks() {
+        return minWarmupForks;
     }
 
     public Optional<String> getJvm() {

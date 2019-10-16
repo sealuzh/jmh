@@ -172,6 +172,15 @@ class MethodGroup implements Comparable<MethodGroup> {
         return Optional.none();
     }
 
+    public Optional<Integer> getMinWarmupIterations() {
+        for (Warmup ann : getAll(Warmup.class)) {
+            if (ann.minIterations() != Warmup.BLANK_MIN_ITERATIONS) {
+                return Optional.of(ann.minIterations());
+            }
+        }
+        return Optional.none();
+    }
+
     public Optional<TimeValue> getWarmupTime() {
         for (Warmup ann : getAll(Warmup.class)) {
             if (ann.time() != Warmup.BLANK_TIME) {
@@ -194,6 +203,15 @@ class MethodGroup implements Comparable<MethodGroup> {
         for (Measurement ann : getAll(Measurement.class)) {
             if (ann.iterations() != Measurement.BLANK_ITERATIONS) {
                 return Optional.of(ann.iterations());
+            }
+        }
+        return Optional.none();
+    }
+
+    public Optional<Integer> getMinMeasurementIterations() {
+        for (Measurement ann : getAll(Measurement.class)) {
+            if (ann.minIterations() != Measurement.BLANK_MIN_ITERATIONS) {
+                return Optional.of(ann.minIterations());
             }
         }
         return Optional.none();
@@ -226,10 +244,28 @@ class MethodGroup implements Comparable<MethodGroup> {
         return Optional.none();
     }
 
+    public Optional<Integer> getMinForks() {
+        for (Fork ann : getAll(Fork.class)) {
+            if (ann.minValue() != Fork.BLANK_MIN_FORKS) {
+                return Optional.of(ann.minValue());
+            }
+        }
+        return Optional.none();
+    }
+
     public Optional<Integer> getWarmupForks() {
         for (Fork ann : getAll(Fork.class)) {
             if (ann.warmups() != Fork.BLANK_FORKS) {
                 return Optional.of(ann.warmups());
+            }
+        }
+        return Optional.none();
+    }
+
+    public Optional<Integer> getMinWarmupForks() {
+        for (Fork ann : getAll(Fork.class)) {
+            if (ann.minWarmups() != Fork.BLANK_MIN_FORKS) {
+                return Optional.of(ann.minWarmups());
             }
         }
         return Optional.none();

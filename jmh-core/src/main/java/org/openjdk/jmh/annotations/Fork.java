@@ -24,11 +24,7 @@
  */
 package org.openjdk.jmh.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * <b>Fork annotation allows to set the default forking parameters for the benchmark.</b>
@@ -39,30 +35,53 @@ import java.lang.annotation.Target;
  * the runtime options.</p>
  */
 @Inherited
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Fork {
 
     int BLANK_FORKS = -1;
+    int BLANK_MIN_FORKS = -1;
 
     String BLANK_ARGS = "blank_blank_blank_2014";
 
-    /** @return number of times harness should fork, zero means "no fork" */
+    /**
+     * @return number of times harness should fork, zero means "no fork"
+     */
     int value() default BLANK_FORKS;
 
-    /** @return number of times harness should fork and ignore the results */
+    /**
+     * @return minimum number of times harness should fork
+     */
+    int minValue() default BLANK_FORKS;
+
+    /**
+     * @return number of times harness should fork and ignore the results
+     */
     int warmups() default BLANK_FORKS;
 
-    /** @return JVM executable to run with */
+    /**
+     * @return minimum number of times harness should fork and ignore the results
+     */
+    int minWarmups() default BLANK_FORKS;
+
+    /**
+     * @return JVM executable to run with
+     */
     String jvm() default BLANK_ARGS;
 
-    /** @return JVM arguments to replace in the command line */
-    String[] jvmArgs() default { BLANK_ARGS };
+    /**
+     * @return JVM arguments to replace in the command line
+     */
+    String[] jvmArgs() default {BLANK_ARGS};
 
-    /** @return JVM arguments to prepend in the command line */
-    String[] jvmArgsPrepend() default { BLANK_ARGS };
+    /**
+     * @return JVM arguments to prepend in the command line
+     */
+    String[] jvmArgsPrepend() default {BLANK_ARGS};
 
-    /** @return JVM arguments to append in the command line */
-    String[] jvmArgsAppend() default { BLANK_ARGS };
+    /**
+     * @return JVM arguments to append in the command line
+     */
+    String[] jvmArgsAppend() default {BLANK_ARGS};
 
 }

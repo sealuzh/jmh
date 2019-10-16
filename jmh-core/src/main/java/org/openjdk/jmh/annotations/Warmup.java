@@ -24,11 +24,7 @@
  */
 package org.openjdk.jmh.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,25 +36,39 @@ import java.util.concurrent.TimeUnit;
  *
  * @see Measurement
  */
-@Target({ElementType.METHOD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Warmup {
 
     int BLANK_ITERATIONS = -1;
+    int BLANK_MIN_ITERATIONS = -1;
     int BLANK_TIME = -1;
     int BLANK_BATCHSIZE = -1;
 
-    /** @return Number of warmup iterations */
+    /**
+     * @return Number of warmup iterations
+     */
     int iterations() default BLANK_ITERATIONS;
 
-    /** @return Time for each warmup iteration */
+    /**
+     * @return Minimum number of warmup iterations
+     */
+    int minIterations() default BLANK_ITERATIONS;
+
+    /**
+     * @return Time for each warmup iteration
+     */
     int time() default BLANK_TIME;
 
-    /** @return Time unit for warmup iteration duration */
+    /**
+     * @return Time unit for warmup iteration duration
+     */
     TimeUnit timeUnit() default TimeUnit.SECONDS;
 
-    /** @return batch size: number of benchmark method calls per operation */
+    /**
+     * @return batch size: number of benchmark method calls per operation
+     */
     int batchSize() default BLANK_BATCHSIZE;
 
 }
