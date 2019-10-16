@@ -72,19 +72,29 @@ public class ResultFormatTest {
             for (int p = 0; p < 5; p++) {
                 ps.put("param" + p, "value" + p, p);
             }
+
+            int threads = r.nextInt(1000);
+            int threadGroups = r.nextInt(1000);
+            int forks = r.nextInt(1000);
+            int warmupForks = r.nextInt(1000);
+            int countWarmup = r.nextInt(1000);
+            int warmupTime = r.nextInt(1000);
+            int countMeasurement = r.nextInt(1000);
+            int measurementTime = r.nextInt(1000);
+
             BenchmarkParams params = new BenchmarkParams(
                     "benchmark_" + b,
                     JSONResultFormat.class.getName() + ".benchmark_" + b + "_" + Mode.Throughput,
                     false,
-                    r.nextInt(1000),
-                    new int[]{ r.nextInt(1000) },
+                    threads,
+                    new int[]{ threadGroups },
                     Collections.<String>emptyList(),
-                    r.nextInt(1000),
-                    r.nextInt(1000),
-                    r.nextInt(1000),
-                    r.nextInt(1000),
-                    new IterationParams(IterationType.WARMUP,      r.nextInt(1000), r.nextInt(1000), TimeValue.seconds(r.nextInt(1000)), 1),
-                    new IterationParams(IterationType.MEASUREMENT, r.nextInt(1000), r.nextInt(1000), TimeValue.seconds(r.nextInt(1000)), 1),
+                    forks,
+                    forks,
+                    warmupForks,
+                    warmupForks,
+                    new IterationParams(IterationType.WARMUP, countWarmup, countWarmup, TimeValue.seconds(warmupTime), 1),
+                    new IterationParams(IterationType.MEASUREMENT, countMeasurement, countMeasurement, TimeValue.seconds(measurementTime), 1),
                     Mode.Throughput,
                     ps,
                     TimeUnit.SECONDS, 1,
