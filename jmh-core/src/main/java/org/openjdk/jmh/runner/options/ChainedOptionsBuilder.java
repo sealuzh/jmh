@@ -180,6 +180,15 @@ public interface ChainedOptionsBuilder {
     ChainedOptionsBuilder warmupIterations(int value);
 
     /**
+     * How many warmup iterations to do at least?
+     * @param value flag
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Warmup
+     * @see org.openjdk.jmh.runner.Defaults#MIN_WARMUP_ITERATIONS
+     */
+    ChainedOptionsBuilder minWarmupIterations(int value);
+
+    /**
      * How large warmup batchSize should be?
      * @param value batch size
      * @return builder
@@ -221,6 +230,15 @@ public interface ChainedOptionsBuilder {
      * @see org.openjdk.jmh.runner.Defaults#MEASUREMENT_ITERATIONS_SINGLESHOT
      */
     ChainedOptionsBuilder measurementIterations(int count);
+
+    /**
+     * How many measurement measurementIterations to do at least
+     * @param count minimum number of iterations
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Measurement
+     * @see org.openjdk.jmh.runner.Defaults#MIN_MEASUREMENT_ITERATIONS
+     */
+    ChainedOptionsBuilder minMeasurementIterations(int count);
 
     /**
      * How large measurement batchSize should be?
@@ -279,6 +297,15 @@ public interface ChainedOptionsBuilder {
     ChainedOptionsBuilder forks(int value);
 
     /**
+     * Minimum number of forks to use in the run
+     * @param value minimum number of forks
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Fork
+     * @see org.openjdk.jmh.runner.Defaults#MIN_MEASUREMENT_FORKS
+     */
+    ChainedOptionsBuilder minForks(int value);
+
+    /**
      * Number of ignored forks
      * @param value number of ignored forks
      * @return builder
@@ -286,6 +313,15 @@ public interface ChainedOptionsBuilder {
      * @see org.openjdk.jmh.runner.Defaults#WARMUP_FORKS
      */
     ChainedOptionsBuilder warmupForks(int value);
+
+    /**
+     * Minimum number of ignored forks
+     * @param minimum value number of ignored forks
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Fork
+     * @see org.openjdk.jmh.runner.Defaults#MIN_WARMUP_FORKS
+     */
+    ChainedOptionsBuilder minWarmupForks(int value);
 
     /**
      * Forked JVM to use.

@@ -422,6 +422,10 @@ public class Runner extends BaseRunner {
                                 benchmark.getMeasurementIterations().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? Defaults.MEASUREMENT_ITERATIONS_SINGLESHOT : Defaults.MEASUREMENT_ITERATIONS
                                 )),
+                        options.getMinMeasurementIterations().orElse(
+                                benchmark.getMinMeasurementIterations().orElse(
+                                        Defaults.MIN_MEASUREMENT_ITERATIONS
+                                )),
                         options.getMeasurementTime().orElse(
                                 benchmark.getMeasurementTime().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? TimeValue.NONE : Defaults.MEASUREMENT_TIME
@@ -432,7 +436,7 @@ public class Runner extends BaseRunner {
                                 )
                         )
                 ) :
-                new IterationParams(IterationType.MEASUREMENT, 0, TimeValue.NONE, 1);
+                new IterationParams(IterationType.MEASUREMENT, 0, 0, TimeValue.NONE, 1);
 
         IterationParams warmup = mode.doWarmup() ?
                 new IterationParams(
@@ -440,6 +444,10 @@ public class Runner extends BaseRunner {
                         options.getWarmupIterations().orElse(
                                 benchmark.getWarmupIterations().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? Defaults.WARMUP_ITERATIONS_SINGLESHOT : Defaults.WARMUP_ITERATIONS
+                                )),
+                        options.getMinWarmupIterations().orElse(
+                                benchmark.getMinWarmupIterations().orElse(
+                                        Defaults.MIN_WARMUP_ITERATIONS
                                 )),
                         options.getWarmupTime().orElse(
                                 benchmark.getWarmupTime().orElse(
@@ -451,15 +459,23 @@ public class Runner extends BaseRunner {
                                 )
                         )
                 ) :
-                new IterationParams(IterationType.WARMUP, 0, TimeValue.NONE, 1);
+                new IterationParams(IterationType.WARMUP, 0, 0, TimeValue.NONE, 1);
 
         int forks = options.getForkCount().orElse(
                 benchmark.getForks().orElse(
                         Defaults.MEASUREMENT_FORKS));
 
+        int minForks = options.getMinForkCount().orElse(
+                benchmark.getMinForks().orElse(
+                        Defaults.MIN_MEASUREMENT_FORKS));
+
         int warmupForks = options.getWarmupForkCount().orElse(
                 benchmark.getWarmupForks().orElse(
                         Defaults.WARMUP_FORKS));
+
+        int minWarmupForks = options.getMinWarmupForkCount().orElse(
+                benchmark.getWarmupForks().orElse(
+                        Defaults.MIN_WARMUP_FORKS));
 
         TimeUnit timeUnit = options.getTimeUnit().orElse(
                 benchmark.getTimeUnit().orElse(
@@ -498,7 +514,7 @@ public class Runner extends BaseRunner {
         String vmName = targetProperties.getProperty("java.vm.name");
         return new BenchmarkParams(benchmark.getUsername(), benchmark.generatedTarget(), synchIterations,
                 threads, threadGroups, benchmark.getThreadGroupLabels().orElse(Collections.<String>emptyList()),
-                forks, warmupForks,
+                forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement, benchmark.getMode(), benchmark.getWorkloadParams(), timeUnit, opsPerInvocation,
                 jvm, jvmArgs,
                 jdkVersion, vmName, vmVersion, Version.getPlainVersion(),

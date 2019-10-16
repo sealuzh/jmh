@@ -354,6 +354,26 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
 
     // ---------------------------------------------------------------------------
 
+    private Optional<Integer> minWarmupIterations = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder minWarmupIterations(int value) {
+        checkGreaterOrEqual(value, 0, "Minimum warmup iterations");
+        this.minWarmupIterations = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Integer> getMinWarmupIterations() {
+        if (otherOptions != null) {
+            return minWarmupIterations.orAnother(otherOptions.getMinWarmupIterations());
+        } else {
+            return minWarmupIterations;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
     private Optional<Integer> warmupBatchSize = Optional.none();
 
     @Override
@@ -447,6 +467,26 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
             return iterations.orAnother(otherOptions.getMeasurementIterations());
         } else {
             return iterations;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<Integer> minIterations = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder minMeasurementIterations(int count) {
+        checkGreaterOrEqual(count, 1, "Minimum measurement iterations");
+        this.minIterations = Optional.of(count);
+        return this;
+    }
+
+    @Override
+    public Optional<Integer> getMinMeasurementIterations() {
+        if (otherOptions != null) {
+            return minIterations.orAnother(otherOptions.getMinMeasurementIterations());
+        } else {
+            return minIterations;
         }
     }
 
@@ -570,6 +610,26 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
 
     // ---------------------------------------------------------------------------
 
+    private Optional<Integer> minForks = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder minForks(int value) {
+        checkGreaterOrEqual(value, 0, "Minimum forks");
+        this.minForks = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Integer> getMinForkCount() {
+        if (otherOptions != null) {
+            return minForks.orAnother(otherOptions.getMinForkCount());
+        } else {
+            return minForks;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
     private Optional<Integer> warmupForks = Optional.none();
 
     @Override
@@ -585,6 +645,26 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
             return warmupForks.orAnother(otherOptions.getWarmupForkCount());
         } else {
             return warmupForks;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<Integer> minWarmupForks = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder minWarmupForks(int value) {
+        checkGreaterOrEqual(value, 0, "Minimum warmup forks");
+        this.minWarmupForks = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Integer> getMinWarmupForkCount() {
+        if (otherOptions != null) {
+            return minWarmupForks.orAnother(otherOptions.getMinWarmupForkCount());
+        } else {
+            return minWarmupForks;
         }
     }
 

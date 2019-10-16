@@ -66,7 +66,7 @@ public class BenchmarkParams extends BenchmarkParamsL4 {
 
     public BenchmarkParams(String benchmark, String generatedTarget, boolean synchIterations,
                            int threads, int[] threadGroups, Collection<String> threadGroupLabels,
-                           int forks, int warmupForks,
+                           int forks, int minForks, int warmupForks, int minWarmupForks,
                            IterationParams warmup, IterationParams measurement,
                            Mode mode, WorkloadParams params,
                            TimeUnit timeUnit, int opsPerInvocation,
@@ -75,7 +75,7 @@ public class BenchmarkParams extends BenchmarkParamsL4 {
                            TimeValue timeout) {
         super(benchmark, generatedTarget, synchIterations,
                 threads, threadGroups, threadGroupLabels,
-                forks, warmupForks,
+                forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
                 mode, params,
                 timeUnit, opsPerInvocation,
@@ -91,7 +91,7 @@ abstract class BenchmarkParamsL4 extends BenchmarkParamsL3 {
     private int markerEnd;
     public BenchmarkParamsL4(String benchmark, String generatedTarget, boolean synchIterations,
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
-                             int forks, int warmupForks,
+                             int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
                              Mode mode, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
@@ -100,7 +100,7 @@ abstract class BenchmarkParamsL4 extends BenchmarkParamsL3 {
                              TimeValue timeout) {
         super(benchmark, generatedTarget, synchIterations,
                 threads, threadGroups, threadGroupLabels,
-                forks, warmupForks,
+                forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
                 mode, params,
                 timeUnit, opsPerInvocation,
@@ -132,7 +132,7 @@ abstract class BenchmarkParamsL3 extends BenchmarkParamsL2 {
 
     public BenchmarkParamsL3(String benchmark, String generatedTarget, boolean synchIterations,
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
-                             int forks, int warmupForks,
+                             int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
                              Mode mode, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
@@ -141,7 +141,7 @@ abstract class BenchmarkParamsL3 extends BenchmarkParamsL2 {
                              TimeValue timeout) {
         super(benchmark, generatedTarget, synchIterations,
                 threads, threadGroups, threadGroupLabels,
-                forks, warmupForks,
+                forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
                 mode, params,
                 timeUnit, opsPerInvocation,
@@ -184,7 +184,9 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
     protected final int[] threadGroups;
     protected final Collection<String> threadGroupLabels;
     protected final int forks;
+    protected final int minForks;
     protected final int warmupForks;
+    protected final int minWarmupForks;
     protected final IterationParams warmup;
     protected final IterationParams measurement;
     protected final Mode mode;
@@ -201,7 +203,7 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
 
     public BenchmarkParamsL2(String benchmark, String generatedTarget, boolean synchIterations,
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
-                             int forks, int warmupForks,
+                             int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
                              Mode mode, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
@@ -215,7 +217,9 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
         this.threadGroups = threadGroups;
         this.threadGroupLabels = threadGroupLabels;
         this.forks = forks;
+        this.minForks = minForks;
         this.warmupForks = warmupForks;
+        this.minWarmupForks = minWarmupForks;
         this.warmup = warmup;
         this.measurement = measurement;
         this.mode = mode;
@@ -290,10 +294,24 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
     }
 
     /**
+     * @return minimum number of forked VM runs, which we measure
+     */
+    public int getMinForks() {
+        return minForks;
+    }
+
+    /**
      * @return number of forked VM runs, which we discard from the result
      */
     public int getWarmupForks() {
         return warmupForks;
+    }
+
+    /**
+     * @return minimum number of forked VM runs, which we discard from the result
+     */
+    public int getMinWarmupForks() {
+        return minWarmupForks;
     }
 
     /**

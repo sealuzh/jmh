@@ -45,10 +45,12 @@ public class CommandLineOptions implements Options {
     private static final long serialVersionUID = 5565183446360224399L;
 
     private final Optional<Integer> iterations;
+    private final Optional<Integer> minIterations;
     private final Optional<TimeValue> timeout;
     private final Optional<TimeValue> runTime;
     private final Optional<Integer> batchSize;
     private final Optional<Integer> warmupIterations;
+    private final Optional<Integer> minWarmupIterations;
     private final Optional<TimeValue> warmupTime;
     private final Optional<Integer> warmupBatchSize;
     private final List<Mode> benchMode = new ArrayList<>();
@@ -63,7 +65,9 @@ public class CommandLineOptions implements Options {
     private final Optional<Integer> opsPerInvocation;
     private final List<String> regexps = new ArrayList<>();
     private final Optional<Integer> fork;
+    private final Optional<Integer> minFork;
     private final Optional<Integer> warmupFork;
+    private final Optional<Integer> minWarmupFork;
     private final Optional<String> output;
     private final Optional<String> result;
     private final Optional<ResultFormatType> resultFormat;
@@ -98,6 +102,11 @@ public class CommandLineOptions implements Options {
                 Defaults.MEASUREMENT_ITERATIONS + " for all other modes)")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.POSITIVE).describedAs("int");
 
+        OptionSpec<Integer> optMinMeasureCount = parser.accepts("mi", "Minimum number of measurement iterations to do. " +
+                "Measurement iterations are counted towards the benchmark score. " +
+                "(default: " + Defaults.MIN_MEASUREMENT_ITERATIONS + ")")
+                .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.POSITIVE).describedAs("int");
+
         OptionSpec<Integer> optMeasureBatchSize = parser.accepts("bs", "Batch size: number of benchmark method " +
                 "calls per operation. Some benchmark modes may ignore this setting, please check this separately. " +
                 "(default: " + Defaults.MEASUREMENT_BATCHSIZE + ")")
@@ -112,6 +121,11 @@ public class CommandLineOptions implements Options {
                 "iterations are not counted towards the benchmark score. " +
                 "(default: " + Defaults.WARMUP_ITERATIONS_SINGLESHOT + " for " + Mode.SingleShotTime + ", and " +
                 Defaults.WARMUP_ITERATIONS + " for all other modes)")
+                .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
+
+        OptionSpec<Integer> optMinWarmupCount = parser.accepts("mwi", "Minimum number of warmup iterations to do. Warmup " +
+                "iterations are not counted towards the benchmark score. " +
+                "(default: " + Defaults.MIN_WARMUP_ITERATIONS + ")")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
 
         OptionSpec<Integer> optWarmupBatchSize = parser.accepts("wbs", "Warmup batch size: number of benchmark " +
@@ -171,10 +185,18 @@ public class CommandLineOptions implements Options {
                 "(default: " + Defaults.MEASUREMENT_FORKS + ")")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
 
+        OptionSpec<Integer> optMinForks = parser.accepts("mf", "How many times to fork a single benchmark at least." +
+                "(default: " + Defaults.MIN_MEASUREMENT_FORKS + ")")
+                .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
+
         OptionSpec<Integer> optWarmupForks = parser.accepts("wf", "How many warmup forks to make for a single benchmark. " +
                 "All iterations within the warmup fork are not counted towards the benchmark score. Use 0 to disable " +
                 "warmup forks. " +
                 "(default: " + Defaults.WARMUP_FORKS + ")")
+                .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
+
+        OptionSpec<Integer> optMinWarmupForks = parser.accepts("mwf", "How many warmup forks to make for a single benchmark at least. " +
+                "(default: " + Defaults.MIN_WARMUP_FORKS + ")")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
 
         OptionSpec<String> optOutput = parser.accepts("o", "Redirect human-readable output to a given file.")
@@ -316,9 +338,11 @@ public class CommandLineOptions implements Options {
             listProfilers = set.has("lprof");
 
             iterations = toOptional(optMeasureCount, set);
+            minIterations = toOptional(optMinMeasureCount, set);
             batchSize = toOptional(optMeasureBatchSize, set);
             runTime = toOptional(optMeasureTime, set);
             warmupIterations = toOptional(optWarmupCount, set);
+            minWarmupIterations = toOptional(optMinWarmupCount, set);
             warmupBatchSize = toOptional(optWarmupBatchSize, set);
             warmupTime = toOptional(optWarmupTime, set);
             timeout = toOptional(optTimeoutTime, set);
@@ -327,7 +351,9 @@ public class CommandLineOptions implements Options {
             gcEachIteration = toOptional(optGC, set);
             failOnError = toOptional(optFOE, set);
             fork = toOptional(optForks, set);
+            minFork = toOptional(optMinForks, set);
             warmupFork = toOptional(optWarmupForks, set);
+            minWarmupFork = toOptional(optMinWarmupForks, set);
             output = toOptional(optOutput, set);
             result = toOptional(optOutputResults, set);
 
@@ -549,8 +575,18 @@ public class CommandLineOptions implements Options {
     }
 
     @Override
+    public Optional<Integer> getMinForkCount() {
+        return minFork;
+    }
+
+    @Override
     public Optional<Integer> getWarmupForkCount() {
         return warmupFork;
+    }
+
+    @Override
+    public Optional<Integer> getMinWarmupForkCount() {
+        return minWarmupFork;
     }
 
     @Override
@@ -574,6 +610,11 @@ public class CommandLineOptions implements Options {
     }
 
     @Override
+    public Optional<Integer> getMinMeasurementIterations() {
+        return minIterations;
+    }
+
+    @Override
     public Optional<Integer> getMeasurementBatchSize() {
         return batchSize;
     }
@@ -591,6 +632,11 @@ public class CommandLineOptions implements Options {
     @Override
     public Optional<Integer> getWarmupIterations() {
         return warmupIterations;
+    }
+
+    @Override
+    public Optional<Integer> getMinWarmupIterations() {
+        return minWarmupIterations;
     }
 
     @Override

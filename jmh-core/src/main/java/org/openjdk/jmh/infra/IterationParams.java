@@ -51,8 +51,8 @@ public final class IterationParams extends IterationParamsL4 {
         Utils.check(IterationParams.class, "type", "count", "timeValue", "batchSize");
     }
 
-    public IterationParams(IterationType type, int count, TimeValue time, int batchSize) {
-        super(type, count, time, batchSize);
+    public IterationParams(IterationType type, int count, int minCount, TimeValue time, int batchSize) {
+        super(type, count, minCount, time, batchSize);
     }
 }
 
@@ -60,8 +60,8 @@ abstract class IterationParamsL4 extends IterationParamsL3 {
     private static final long serialVersionUID = 9079354621906758255L;
 
     private int markerEnd;
-    public IterationParamsL4(IterationType type, int count, TimeValue time, int batchSize) {
-        super(type, count, time, batchSize);
+    public IterationParamsL4(IterationType type, int count, int minCount, TimeValue time, int batchSize) {
+        super(type, count, minCount, time, batchSize);
     }
 }
 
@@ -85,8 +85,8 @@ abstract class IterationParamsL3 extends IterationParamsL2 {
     private boolean q161, q162, q163, q164, q165, q166, q167, q168;
     private boolean q171, q172, q173, q174, q175, q176, q177, q178;
 
-    public IterationParamsL3(IterationType type, int count, TimeValue time, int batchSize) {
-        super(type, count, time, batchSize);
+    public IterationParamsL3(IterationType type, int count, int minCount, TimeValue time, int batchSize) {
+        super(type, count, minCount, time, batchSize);
     }
 }
 
@@ -127,6 +127,11 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
     protected final int count;
 
     /**
+     * minimum amount of iterations
+     */
+    protected final int minCount;
+
+    /**
      * iteration runtime
      */
     protected final TimeValue timeValue;
@@ -136,9 +141,10 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
      */
     protected final int batchSize;
 
-    public IterationParamsL2(IterationType type, int count, TimeValue time, int batchSize) {
+    public IterationParamsL2(IterationType type, int count, int minCount, TimeValue time, int batchSize) {
         this.type = type;
         this.count = count;
+        this.minCount = minCount;
         this.timeValue = time;
         this.batchSize = batchSize;
     }
@@ -156,6 +162,14 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
      * @return number of iterations of given type.
      */
     public int getCount() {
+        return count;
+    }
+
+    /**
+     * Minimum number of iterations.
+     * @return number of iterations of given type.
+     */
+    public int getMinCount() {
         return count;
     }
 
@@ -183,6 +197,7 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
         IterationParams that = (IterationParams) o;
 
         if (count != that.count) return false;
+        if (minCount != that.minCount) return false;
         if (batchSize != that.batchSize) return false;
         if (timeValue != null ? !timeValue.equals(that.timeValue) : that.timeValue != null) return false;
 
@@ -192,6 +207,7 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
     @Override
     public int hashCode() {
         int result = count;
+        result = 31 * result + minCount;
         result = 31 * result + batchSize;
         result = 31 * result + (timeValue != null ? timeValue.hashCode() : 0);
         return result;
@@ -199,7 +215,7 @@ abstract class IterationParamsL2 extends IterationParamsL1 implements Serializab
 
     @Override
     public String toString() {
-        return "IterationParams("+ getCount()+", "+ getTime()+", "+ getBatchSize()+")";
+        return "IterationParams("+ getCount()+", "+ getCount()+", "+ getTime()+", "+ getBatchSize()+")";
     }
 
 }

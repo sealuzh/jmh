@@ -119,6 +119,13 @@ public interface Options extends Serializable {
     Optional<Integer> getWarmupIterations();
 
     /**
+     * Minimum number of warmup iterations
+     * @return minimum number of warmup iterations
+     * @see org.openjdk.jmh.annotations.Warmup
+     */
+    Optional<Integer> getMinWarmupIterations();
+
+    /**
      * The duration for warmup iterations
      * @return duration
      * @see org.openjdk.jmh.annotations.Warmup
@@ -151,6 +158,13 @@ public interface Options extends Serializable {
      * @see org.openjdk.jmh.annotations.Measurement
      */
     Optional<Integer> getMeasurementIterations();
+
+    /**
+     * Minimum number of measurement iterations
+     * @return minimum number of measurement iterations
+     * @see org.openjdk.jmh.annotations.Measurement
+     */
+    Optional<Integer> getMinMeasurementIterations();
 
     /**
      * The duration for measurement iterations
@@ -195,11 +209,25 @@ public interface Options extends Serializable {
     Optional<Integer> getForkCount();
 
     /**
+     * Minimum fork count
+     * @return minimum fork count
+     * @see org.openjdk.jmh.annotations.Fork
+     */
+    Optional<Integer> getMinForkCount();
+
+    /**
      * Number of initial forks to ignore the results for
      * @return initial fork count; 0, to disable
      * @see org.openjdk.jmh.annotations.Fork
      */
     Optional<Integer> getWarmupForkCount();
+
+    /**
+     * Minimum number of initial forks to ignore the results for
+     * @return minimum initial fork count
+     * @see org.openjdk.jmh.annotations.Fork
+     */
+    Optional<Integer> getMinWarmupForkCount();
 
     /**
      * JVM executable to use for forks

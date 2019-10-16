@@ -43,6 +43,11 @@ public class Defaults {
     public static final int WARMUP_ITERATIONS = 5;
 
     /**
+     * Minimum number of warmup iterations.
+     */
+    public static final int MIN_WARMUP_ITERATIONS = 2;
+
+    /**
      * Number of warmup iterations in {@link org.openjdk.jmh.annotations.Mode#SingleShotTime} mode.
      */
     public static final int WARMUP_ITERATIONS_SINGLESHOT = 0;
@@ -61,6 +66,11 @@ public class Defaults {
      * Number of measurement iterations.
      */
     public static final int MEASUREMENT_ITERATIONS = 5;
+
+    /**
+     * Minimum number of measurement iterations.
+     */
+    public static final int MIN_MEASUREMENT_ITERATIONS = 2;
 
     /**
      * Number of measurement iterations in {@link org.openjdk.jmh.annotations.Mode#SingleShotTime} mode.
@@ -88,9 +98,19 @@ public class Defaults {
     public static final int MEASUREMENT_FORKS = 5;
 
     /**
+     * Minimum number of forks in which we measure the workload.
+     */
+    public static final int MIN_MEASUREMENT_FORKS = 2;
+
+    /**
      * Number of warmup forks we discard.
      */
     public static final int WARMUP_FORKS = 0;
+
+    /**
+     * Minimum number of warmup forks we discard.
+     */
+    public static final int MIN_WARMUP_FORKS = 0;
 
     /**
      * Should JMH fail on benchmark error?

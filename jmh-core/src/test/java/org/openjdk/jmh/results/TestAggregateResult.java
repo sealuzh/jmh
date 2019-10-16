@@ -52,14 +52,14 @@ public class TestAggregateResult {
         result = new IterationResult(
                 new BenchmarkParams("blah", "blah", false,
                         1, new int[]{1}, Collections.<String>emptyList(),
-                        1, 1,
-                        new IterationParams(IterationType.WARMUP, 1, TimeValue.seconds(1), 1),
-                        new IterationParams(IterationType.MEASUREMENT, 1, TimeValue.seconds(1), 1),
+                        1, 1, 1, 1,
+                        new IterationParams(IterationType.WARMUP, 1, 1, TimeValue.seconds(1), 1),
+                        new IterationParams(IterationType.MEASUREMENT, 1, 1, TimeValue.seconds(1), 1),
                         Mode.Throughput, null, TimeUnit.SECONDS, 1,
                         Utils.getCurrentJvm(), Collections.<String>emptyList(),
                         System.getProperty("java.version"), System.getProperty("java.vm.name"), System.getProperty("java.vm.version"), Version.getPlainVersion(),
                         TimeValue.days(1)),
-                new IterationParams(IterationType.MEASUREMENT, 1, TimeValue.days(1), 1),
+                new IterationParams(IterationType.MEASUREMENT, 1, 1, TimeValue.days(1), 1),
                 null
         );
         for (double d : values) {
