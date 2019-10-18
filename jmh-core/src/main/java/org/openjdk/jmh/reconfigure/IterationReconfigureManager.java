@@ -7,41 +7,24 @@ import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluation;
 import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluationFactory;
 import org.openjdk.jmh.results.IterationResult;
 
-import java.util.*;
+import java.util.List;
 
-public class IterationReconfigureManager {
-    private final BenchmarkParams benchParams;
+public class IterationReconfigureManager extends ReconfigureManager {
     private int currentWarmupIteration = 0;
     private int currentMeasurementIteration = 0;
 
-    private Map<Integer, List<HistogramItem>> warmupHistogram = new HashMap<>();
-    private Map<Integer, List<HistogramItem>> measurementHistogram = new HashMap<>();
-
-    private List<Double> warmupThresholds = new ArrayList<>();
-    private List<Double> measurementThresholds = new ArrayList<>();
-
     public IterationReconfigureManager(BenchmarkParams benchParams) {
-        this.benchParams = benchParams;
+        super(benchParams);
     }
 
     public void addWarmupIteration(int iteration, IterationResult ir) {
         currentWarmupIteration = iteration;
-        warmupHistogram.put(iteration, toHistogramItems(iteration, ir));
+        warmupHistogram.put(iteration, toHistogramItems(0, iteration, ir));
     }
 
     public void addMeasurementIteration(int iteration, IterationResult ir) {
         currentMeasurementIteration = iteration;
-        measurementHistogram.put(iteration, toHistogramItems(iteration, ir));
-    }
-
-    private List<HistogramItem> toHistogramItems(int iteration, IterationResult ir) {
-        List<HistogramItem> list = new ArrayList<>();
-        Iterator<Map.Entry<Double, Long>> iterator = ir.getPrimaryResult().getStatistics().getRawData();
-        while (iterator.hasNext()) {
-            Map.Entry<Double, Long> entry = iterator.next();
-            list.add(new HistogramItem(0, iteration, entry.getKey(), entry.getValue()));
-        }
-        return list;
+        measurementHistogram.put(iteration, toHistogramItems(0, iteration, ir));
     }
 
     public boolean checkWarmupIterationThreshold() {
@@ -68,13 +51,5 @@ public class IterationReconfigureManager {
             measurementThresholds.add(value);
             return value < se.getThreshold();
         }
-    }
-
-    public List<Double> getWarmupThresholds() {
-        return warmupThresholds;
-    }
-
-    public List<Double> getMeasurementThresholds() {
-        return measurementThresholds;
     }
 }

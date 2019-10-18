@@ -27,10 +27,7 @@ package org.openjdk.jmh.results;
 import org.openjdk.jmh.infra.BenchmarkParams;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Complete run result.
@@ -42,10 +39,14 @@ public class RunResult implements Serializable {
 
     private final Collection<BenchmarkResult> benchmarkResults;
     private final BenchmarkParams params;
+    private final List<Double> warmupThresholds;
+    private final List<Double> measurementThresholds;
 
-    public RunResult(BenchmarkParams params, Collection<BenchmarkResult> data) {
+    public RunResult(BenchmarkParams params, Collection<BenchmarkResult> data, List<Double> warmupThresholds, List<Double> measurementThresholds) {
         this.benchmarkResults = data;
         this.params = params;
+        this.warmupThresholds = warmupThresholds;
+        this.measurementThresholds = measurementThresholds;
     }
 
     public Collection<BenchmarkResult> getBenchmarkResults() {
@@ -92,11 +93,18 @@ public class RunResult implements Serializable {
         return params;
     }
 
+    public List<Double> getWarmupThresholds() {
+        return warmupThresholds;
+    }
+
+    public List<Double> getMeasurementThresholds() {
+        return measurementThresholds;
+    }
+
     public static final Comparator<RunResult> DEFAULT_SORT_COMPARATOR = new Comparator<RunResult>() {
         @Override
         public int compare(RunResult o1, RunResult o2) {
             return o1.params.compareTo(o2.params);
         }
     };
-
 }

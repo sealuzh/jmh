@@ -118,7 +118,7 @@ public class ResultFormatTest {
                 }
                 benchmarkResults.add(new BenchmarkResult(params, iterResults));
             }
-            results.add(new RunResult(params, benchmarkResults));
+            results.add(new RunResult(params, benchmarkResults, null, null));
         }
         return results;
     }

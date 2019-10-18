@@ -24,6 +24,7 @@
  */
 package org.openjdk.jmh.runner;
 
+import org.apache.commons.math3.util.Pair;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.infra.BenchmarkParams;
@@ -31,14 +32,15 @@ import org.openjdk.jmh.infra.IterationParams;
 import org.openjdk.jmh.profile.ExternalProfiler;
 import org.openjdk.jmh.profile.ProfilerException;
 import org.openjdk.jmh.profile.ProfilerFactory;
+import org.openjdk.jmh.reconfigure.ForkReconfigureManager;
 import org.openjdk.jmh.results.*;
 import org.openjdk.jmh.results.format.ResultFormatFactory;
 import org.openjdk.jmh.runner.format.OutputFormat;
 import org.openjdk.jmh.runner.format.OutputFormatFactory;
 import org.openjdk.jmh.runner.link.BinaryLinkServer;
 import org.openjdk.jmh.runner.options.*;
-import org.openjdk.jmh.util.*;
 import org.openjdk.jmh.util.Optional;
+import org.openjdk.jmh.util.*;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -48,8 +50,10 @@ import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.jar.*;
-import java.util.zip.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 /**
  * Runner executes JMH benchmarks.
@@ -562,6 +566,7 @@ public class Runner extends BaseRunner {
         out.startRun();
 
         Multimap<BenchmarkParams, BenchmarkResult> results = new TreeMultimap<>();
+        Map<BenchmarkParams, Pair<List<Double>, List<Double>>> thresholds = new HashMap<>();
         List<ActionPlan> plan = getActionPlans(benchmarks);
 
         etaBeforeBenchmarks(plan);
@@ -574,7 +579,10 @@ public class Runner extends BaseRunner {
                         res = runBenchmarksEmbedded(r);
                         break;
                     case FORKED:
-                        res = runSeparate(r);
+                        Pair<Multimap<BenchmarkParams, BenchmarkResult>, Pair<List<Double>, List<Double>>> pair = runSeparate(r);
+                        res = pair.getFirst();
+                        BenchmarkParams params = r.getMeasurementActions().get(0).getParams();
+                        thresholds.put(params, pair.getSecond());
                         break;
                     default:
                         throw new IllegalStateException("Unknown action plan type: " + r.getType());
@@ -587,7 +595,7 @@ public class Runner extends BaseRunner {
 
             etaAfterBenchmarks();
 
-            SortedSet<RunResult> runResults = mergeRunResults(results);
+            SortedSet<RunResult> runResults = mergeRunResults(results, thresholds);
             out.endRun(runResults);
             return runResults;
         } catch (BenchmarkException be) {
@@ -595,16 +603,18 @@ public class Runner extends BaseRunner {
         }
     }
 
-    private SortedSet<RunResult> mergeRunResults(Multimap<BenchmarkParams, BenchmarkResult> results) {
+    private SortedSet<RunResult> mergeRunResults(Multimap<BenchmarkParams, BenchmarkResult> results, Map<BenchmarkParams, Pair<List<Double>, List<Double>>> thresholds) {
         SortedSet<RunResult> result = new TreeSet<>(RunResult.DEFAULT_SORT_COMPARATOR);
         for (BenchmarkParams key : results.keys()) {
-            result.add(new RunResult(key, results.get(key)));
+            Pair<List<Double>, List<Double>> thresholdPair = thresholds.get(key);
+            result.add(new RunResult(key, results.get(key), thresholdPair.getFirst(), thresholdPair.getSecond()));
         }
         return result;
     }
 
-    private Multimap<BenchmarkParams, BenchmarkResult> runSeparate(ActionPlan actionPlan) {
+    private Pair<Multimap<BenchmarkParams, BenchmarkResult>, Pair<List<Double>, List<Double>>> runSeparate(ActionPlan actionPlan) {
         Multimap<BenchmarkParams, BenchmarkResult> results = new HashMultimap<>();
+        Pair<List<Double>, List<Double>> threshold = new Pair<List<Double>, List<Double>>(new ArrayList<Double>(), new ArrayList<Double>());
 
         if (actionPlan.getMeasurementActions().size() != 1) {
             throw new IllegalStateException("Expect only single benchmark in the action plan, but was " + actionPlan.getMeasurementActions().size());
@@ -641,8 +651,17 @@ public class Runner extends BaseRunner {
             int warmupForkCount = params.getWarmupForks();
             int totalForks = warmupForkCount + forkCount;
 
+            ForkReconfigureManager frm = new ForkReconfigureManager(params);
+
             for (int i = 0; i < totalForks; i++) {
                 boolean warmupFork = (i < warmupForkCount);
+                int forkNr;
+                if(i < warmupForkCount){
+                    forkNr = i + 1;
+                }else{
+                    forkNr = i - warmupForkCount + 1;
+                }
+
                 List<String> forkedString  = getForkedMainCommand(params, profilers, server.getHost(), server.getPort());
 
                 etaBeforeBenchmark();
@@ -709,9 +728,20 @@ public class Runner extends BaseRunner {
                 // we know these are not needed anymore, proactively delete
                 stdOut.delete();
                 stdErr.delete();
+
+                frm.addFork(warmupFork, forkNr, result);
+                if(frm.checkForkThreshold(warmupFork)){
+                    if(warmupFork){
+                        // Set to last warmup fork to skip all not executed warmup forks
+                        i = warmupForkCount - 1;
+                    }else{
+                        break;
+                    }
+                }
             }
 
-            out.endBenchmark(new RunResult(params, results.get(params)).getAggregatedResult());
+            threshold = new Pair<>(frm.getWarmupThresholds(), frm.getMeasurementThresholds());
+            out.endBenchmark(new RunResult(params, results.get(params), frm.getWarmupThresholds(), frm.getMeasurementThresholds()).getAggregatedResult());
 
         } catch (IOException e) {
             results.clear();
@@ -729,7 +759,7 @@ public class Runner extends BaseRunner {
             FileUtils.purgeTemps();
         }
 
-        return results;
+        return new Pair(results, threshold);
     }
 
     private List<IterationResult> doFork(BinaryLinkServer reader, List<String> commandString,

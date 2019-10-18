@@ -37,6 +37,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 class JSONResultFormat implements ResultFormat {
@@ -114,28 +115,24 @@ class JSONResultFormat implements ResultFormat {
             if (reconfigure) {
                 pw.println("\"thresholds\" : {");
 
+                pw.println("\"warmupForks\" : ");
+                Collection<String> warmupForkThresholds = toListOfStrings(runResult.getWarmupThresholds());
+                pw.println(printMultiple(warmupForkThresholds, "[", "]"));
+                pw.println(",");
+
+                pw.println("\"measurementForks\" : ");
+                Collection<String> measurementForkThresholds = toListOfStrings(runResult.getMeasurementThresholds());
+                pw.println(printMultiple(measurementForkThresholds, "[", "]"));
+                pw.println(",");
+
                 Collection<String> warmupIterationList = new ArrayList<>();
                 Collection<String> measurementIterationList = new ArrayList<>();
                 for (BenchmarkResult benchmarkResult : runResult.getBenchmarkResults()) {
-                    Collection<String> warmupThresholds = new ArrayList<>();
-                    for (Double threshold : benchmarkResult.getMetadata().getWarmupThresholds()) {
-                        if (threshold == null) {
-                            warmupThresholds.add(null);
-                        } else {
-                            warmupThresholds.add(threshold.toString());
-                        }
-                    }
-                    warmupIterationList.add(printMultiple(warmupThresholds, "[", "]"));
+                    Collection<String> warmupIterationThresholds = toListOfStrings(benchmarkResult.getMetadata().getWarmupThresholds());
+                    warmupIterationList.add(printMultiple(warmupIterationThresholds, "[", "]"));
 
-                    Collection<String> measurementThresholds = new ArrayList<>();
-                    for (Double threshold : benchmarkResult.getMetadata().getMeasurementThresholds()) {
-                        if (threshold == null) {
-                            measurementThresholds.add(null);
-                        } else {
-                            measurementThresholds.add(threshold.toString());
-                        }
-                    }
-                    measurementIterationList.add(printMultiple(measurementThresholds, "[", "]"));
+                    Collection<String> measurementIterationThresholds = toListOfStrings(benchmarkResult.getMetadata().getMeasurementThresholds());
+                    measurementIterationList.add(printMultiple(measurementIterationThresholds, "[", "]"));
                 }
 
                 pw.println("\"warmupIterations\" : {");
@@ -410,4 +407,15 @@ class JSONResultFormat implements ResultFormat {
         }
     }
 
+    private static List<String> toListOfStrings(List<Double> doubles){
+        List<String> strings = new ArrayList<>();
+        for (Double threshold : doubles) {
+            if (threshold == null) {
+                strings.add(null);
+            } else {
+                strings.add(threshold.toString());
+            }
+        }
+        return strings;
+    }
 }

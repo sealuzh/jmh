@@ -57,7 +57,7 @@ public class ResultAggregationTest {
         Assert.assertEquals(1, br.getSecondaryResults().get("bench").getSampleCount());
         Assert.assertEquals(2, br.getIterationResults().size());
 
-        RunResult rr = new RunResult(null, Arrays.asList(br, br));
+        RunResult rr = new RunResult(null, Arrays.asList(br, br), null, null);
         Assert.assertEquals(20000.0, rr.getPrimaryResult().getScore());
         Assert.assertEquals(10000.0, rr.getSecondaryResults().get("sec").getScore());
         Assert.assertEquals(3000.0, rr.getSecondaryResults().get("bench").getScore());
@@ -91,7 +91,7 @@ public class ResultAggregationTest {
         Assert.assertEquals(1, br.getSecondaryResults().get("bench").getSampleCount());
         Assert.assertEquals(2, br.getIterationResults().size());
 
-        RunResult rr = new RunResult(null, Arrays.asList(br, br));
+        RunResult rr = new RunResult(null, Arrays.asList(br, br), null, null);
         Assert.assertEquals(10000.0, rr.getPrimaryResult().getScore());
         Assert.assertEquals(5000.0, rr.getSecondaryResults().get("sec").getScore());
         Assert.assertEquals(3000.0, rr.getSecondaryResults().get("bench").getScore());
@@ -134,7 +134,7 @@ public class ResultAggregationTest {
         Assert.assertEquals(1, br.getSecondaryResults().get("bench").getSampleCount());
         Assert.assertEquals(2, br.getIterationResults().size());
 
-        RunResult rr = new RunResult(null, Arrays.asList(br, br));
+        RunResult rr = new RunResult(null, Arrays.asList(br, br), null, null);
         Assert.assertEquals(10000.0, rr.getPrimaryResult().getScore());
         Assert.assertEquals(5000.0, rr.getSecondaryResults().get("sec").getScore());
         Assert.assertEquals(3000.0, rr.getSecondaryResults().get("bench").getScore());
@@ -168,7 +168,7 @@ public class ResultAggregationTest {
         Assert.assertEquals(1, br.getSecondaryResults().get("bench").getSampleCount());
         Assert.assertEquals(2, br.getIterationResults().size());
 
-        RunResult rr = new RunResult(null, Arrays.asList(br, br));
+        RunResult rr = new RunResult(null, Arrays.asList(br, br), null, null);
         Assert.assertEquals(10000.0, rr.getPrimaryResult().getScore());
         Assert.assertEquals(5000.0, rr.getSecondaryResults().get("sec").getScore());
         Assert.assertEquals(3000.0, rr.getSecondaryResults().get("bench").getScore());
