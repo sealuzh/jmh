@@ -37,8 +37,9 @@ public class BenchmarkResultMetaData implements Serializable {
     private final long measurementOps;
     private final List<Double> warmupThresholds;
     private final List<Double> measurementThresholds;
+    private final boolean atLeastOneWarning;
 
-    public BenchmarkResultMetaData(long warmupTime, long measurementTime, long stopTime, long warmupOps, long measurementOps, List<Double> warmupThresholds, List<Double> measurementThresholds) {
+    public BenchmarkResultMetaData(long warmupTime, long measurementTime, long stopTime, long warmupOps, long measurementOps, List<Double> warmupThresholds, List<Double> measurementThresholds, boolean atLeastOneWarning) {
         this.startTime = Long.MIN_VALUE;
         this.warmupTime = warmupTime;
         this.measurementTime = measurementTime;
@@ -47,6 +48,7 @@ public class BenchmarkResultMetaData implements Serializable {
         this.measurementOps = measurementOps;
         this.warmupThresholds = warmupThresholds;
         this.measurementThresholds = measurementThresholds;
+        this.atLeastOneWarning = atLeastOneWarning;
     }
 
     public long getStartTime() {
@@ -82,6 +84,10 @@ public class BenchmarkResultMetaData implements Serializable {
 
     public List<Double> getMeasurementThresholds() {
         return measurementThresholds;
+    }
+
+    public boolean hasAtLeastOneWarning() {
+        return atLeastOneWarning;
     }
 
     public void adjustStart(long startTime) {

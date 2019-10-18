@@ -230,13 +230,20 @@ class TextReportFormat extends AbstractOutputFormat {
     }
 
     @Override
-    public void endRun(Collection<RunResult> runResults) {
+    public void endRun(Collection<RunResult> runResults, boolean atLeastOneWarning) {
         out.println("REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on");
         out.println("why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial");
         out.println("experiments, perform baseline and negative tests that provide experimental control, make sure");
         out.println("the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.");
         out.println("Do not assume the numbers tell you what you want them to tell.");
         out.println("");
+
+        if (atLeastOneWarning) {
+            out.println("##########");
+            out.println("At least one warning exists from the dynamic reconfiguration!");
+            out.println("##########");
+            out.println("");
+        }
 
         ResultFormatFactory.getInstance(ResultFormatType.TEXT, out).writeOut(runResults);
     }

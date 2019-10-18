@@ -249,7 +249,7 @@ abstract class BaseRunner {
         long allWarmup = 0;
         long allMeasurement = 0;
 
-        IterationReconfigureManager irm = new IterationReconfigureManager(benchParams);
+        IterationReconfigureManager irm = new IterationReconfigureManager(benchParams, out);
 
         // warmup
         IterationParams wp = benchParams.getWarmup();
@@ -305,7 +305,7 @@ abstract class BaseRunner {
 
         BenchmarkResultMetaData md = new BenchmarkResultMetaData(
                 warmupTime, measurementTime, stopTime,
-                allWarmup, allMeasurement, irm.getWarmupThresholds(), irm.getMeasurementThresholds());
+                allWarmup, allMeasurement, irm.getWarmupThresholds(), irm.getMeasurementThresholds(), irm.hasAtLeastOneWarning());
 
         if (acceptor != null) {
             acceptor.acceptMeta(md);

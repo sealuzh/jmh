@@ -79,7 +79,7 @@ public interface OutputFormat {
      * Format for end-of-benchmark.
      * @param result benchmark results
      */
-    void endRun(Collection<RunResult> result);
+    void endRun(Collection<RunResult> result, boolean atLeastOneWarning);
 
     /* ------------- RAW OUTPUT METHODS ------------------- */
 

@@ -33,6 +33,7 @@ import org.openjdk.jmh.profile.ExternalProfiler;
 import org.openjdk.jmh.profile.ProfilerException;
 import org.openjdk.jmh.profile.ProfilerFactory;
 import org.openjdk.jmh.reconfigure.ForkReconfigureManager;
+import org.openjdk.jmh.reconfigure.helper.BenchmarkMetaData;
 import org.openjdk.jmh.results.*;
 import org.openjdk.jmh.results.format.ResultFormatFactory;
 import org.openjdk.jmh.runner.format.OutputFormat;
@@ -567,6 +568,8 @@ public class Runner extends BaseRunner {
 
         Multimap<BenchmarkParams, BenchmarkResult> results = new TreeMultimap<>();
         Map<BenchmarkParams, Pair<List<Double>, List<Double>>> thresholds = new HashMap<>();
+        boolean atLeastOneWarning = false;
+
         List<ActionPlan> plan = getActionPlans(benchmarks);
 
         etaBeforeBenchmarks(plan);
@@ -579,10 +582,11 @@ public class Runner extends BaseRunner {
                         res = runBenchmarksEmbedded(r);
                         break;
                     case FORKED:
-                        Pair<Multimap<BenchmarkParams, BenchmarkResult>, Pair<List<Double>, List<Double>>> pair = runSeparate(r);
-                        res = pair.getFirst();
+                        BenchmarkMetaData bmd = runSeparate(r);
+                        res = bmd.getResults();
                         BenchmarkParams params = r.getMeasurementActions().get(0).getParams();
-                        thresholds.put(params, pair.getSecond());
+                        thresholds.put(params,bmd.getThresholdsPair());
+                        atLeastOneWarning = bmd.hasAtLeastOneWarning();
                         break;
                     default:
                         throw new IllegalStateException("Unknown action plan type: " + r.getType());
@@ -596,7 +600,7 @@ public class Runner extends BaseRunner {
             etaAfterBenchmarks();
 
             SortedSet<RunResult> runResults = mergeRunResults(results, thresholds);
-            out.endRun(runResults);
+            out.endRun(runResults, atLeastOneWarning);
             return runResults;
         } catch (BenchmarkException be) {
             throw new RunnerException("Benchmark caught the exception", be);
@@ -612,9 +616,9 @@ public class Runner extends BaseRunner {
         return result;
     }
 
-    private Pair<Multimap<BenchmarkParams, BenchmarkResult>, Pair<List<Double>, List<Double>>> runSeparate(ActionPlan actionPlan) {
+    private BenchmarkMetaData runSeparate(ActionPlan actionPlan) {
         Multimap<BenchmarkParams, BenchmarkResult> results = new HashMultimap<>();
-        Pair<List<Double>, List<Double>> threshold = new Pair<List<Double>, List<Double>>(new ArrayList<Double>(), new ArrayList<Double>());
+        BenchmarkMetaData bmd = new BenchmarkMetaData();
 
         if (actionPlan.getMeasurementActions().size() != 1) {
             throw new IllegalStateException("Expect only single benchmark in the action plan, but was " + actionPlan.getMeasurementActions().size());
@@ -651,7 +655,8 @@ public class Runner extends BaseRunner {
             int warmupForkCount = params.getWarmupForks();
             int totalForks = warmupForkCount + forkCount;
 
-            ForkReconfigureManager frm = new ForkReconfigureManager(params);
+            ForkReconfigureManager frm = new ForkReconfigureManager(params, out);
+            boolean atLeastOneWarning = false;
 
             for (int i = 0; i < totalForks; i++) {
                 boolean warmupFork = (i < warmupForkCount);
@@ -702,6 +707,10 @@ public class Runner extends BaseRunner {
                     BenchmarkResultMetaData md = server.getMetadata();
                     if (md != null) {
                         md.adjustStart(startTime);
+
+                        if(md.hasAtLeastOneWarning()){
+                            atLeastOneWarning = true;
+                        }
                     }
 
                     BenchmarkResult br = new BenchmarkResult(params, result, md);
@@ -740,7 +749,11 @@ public class Runner extends BaseRunner {
                 }
             }
 
-            threshold = new Pair<>(frm.getWarmupThresholds(), frm.getMeasurementThresholds());
+            if(frm.hasAtLeastOneWarning()){
+                atLeastOneWarning = true;
+            }
+
+            bmd = new BenchmarkMetaData(results, frm.getWarmupThresholds(), frm.getMeasurementThresholds(), atLeastOneWarning );
             out.endBenchmark(new RunResult(params, results.get(params), frm.getWarmupThresholds(), frm.getMeasurementThresholds()).getAggregatedResult());
 
         } catch (IOException e) {
@@ -759,7 +772,7 @@ public class Runner extends BaseRunner {
             FileUtils.purgeTemps();
         }
 
-        return new Pair(results, threshold);
+        return bmd;
     }
 
     private List<IterationResult> doFork(BinaryLinkServer reader, List<String> commandString,

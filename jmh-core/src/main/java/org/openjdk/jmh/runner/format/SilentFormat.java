@@ -48,7 +48,7 @@ class SilentFormat extends AbstractOutputFormat {
     }
 
     @Override
-    public void endRun(Collection<RunResult> results) {
+    public void endRun(Collection<RunResult> results, boolean atLeastOneWarning) {
     }
 
     @Override
