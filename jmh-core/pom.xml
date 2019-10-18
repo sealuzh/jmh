@@ -93,26 +93,26 @@ questions.
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <header>file:///${project.basedir}/../src/license/gpl_cpe/header.txt</header>
-                            <skipExistingHeaders>true</skipExistingHeaders>
-                            <strictCheck>true</strictCheck>
-                            <mapping>
-                                <java>PHP</java>
-                            </mapping>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.mycila.maven-license-plugin</groupId>-->
+<!--                <artifactId>maven-license-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>format</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>process-sources</phase>-->
+<!--                        <configuration>-->
+<!--                            <header>file:///${project.basedir}/../src/license/gpl_cpe/header.txt</header>-->
+<!--                            <skipExistingHeaders>true</skipExistingHeaders>-->
+<!--                            <strictCheck>true</strictCheck>-->
+<!--                            <mapping>-->
+<!--                                <java>PHP</java>-->
+<!--                            </mapping>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
