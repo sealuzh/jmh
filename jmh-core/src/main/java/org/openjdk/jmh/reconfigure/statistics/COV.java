@@ -19,6 +19,7 @@ class COV implements StatisticalEvaluation {
 
     @Override
     public double getValue() {
+        // TODO outlierFactor
         OutlierDetector od = new OutlierDetector(10.0, list);
         od.run();
         return calculate(od.getInlier());
