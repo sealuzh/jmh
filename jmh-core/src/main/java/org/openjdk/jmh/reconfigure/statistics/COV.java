@@ -8,11 +8,13 @@ import org.openjdk.jmh.reconfigure.helper.OutlierDetector;
 
 import java.util.List;
 
-public class COV implements StatisticalEvaluation {
+class COV implements StatisticalEvaluation {
     private List<Double> list;
+    private double threshold;
 
-    public COV(List<HistogramItem> list) {
+    public COV(List<HistogramItem> list, double threshold) {
         this.list = HistogramHelper.toArray(list);
+        this.threshold = threshold;
     }
 
     @Override
@@ -26,5 +28,10 @@ public class COV implements StatisticalEvaluation {
         double[] array = ListToArray.toPrimitive(input);
         DescriptiveStatistics ds = new DescriptiveStatistics(array);
         return ds.getStandardDeviation() / ds.getMean();
+    }
+
+    @Override
+    public double getThreshold() {
+        return threshold;
     }
 }

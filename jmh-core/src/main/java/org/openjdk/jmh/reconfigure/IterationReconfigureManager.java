@@ -2,8 +2,9 @@ package org.openjdk.jmh.reconfigure;
 
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.reconfigure.helper.HistogramHelper;
-import org.openjdk.jmh.reconfigure.statistics.COV;
+import org.openjdk.jmh.reconfigure.statistics.EvaluationType;
 import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluation;
+import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluationFactory;
 import org.openjdk.jmh.results.IterationResult;
 
 import java.util.*;
@@ -49,11 +50,10 @@ public class IterationReconfigureManager {
             return false;
         } else {
             List<HistogramItem> warmupList = HistogramHelper.toList(warmupHistogram);
-            StatisticalEvaluation se = new COV(warmupList);
+            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, warmupList, EvaluationType.WARMUP_ITERATION);
             double value = se.getValue();
             warmupThresholds.add(value);
-            // TODO threshold
-            return value < 0.05;
+            return value < se.getThreshold();
         }
     }
 
@@ -63,11 +63,10 @@ public class IterationReconfigureManager {
             return false;
         } else {
             List<HistogramItem> measurementList = HistogramHelper.toList(measurementHistogram);
-            StatisticalEvaluation se = new COV(measurementList);
+            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, measurementList, EvaluationType.MEASUREMENT_ITERATION);
             double value = se.getValue();
             measurementThresholds.add(value);
-            // TODO threshold
-            return value < 0.05;
+            return value < se.getThreshold();
         }
     }
 
