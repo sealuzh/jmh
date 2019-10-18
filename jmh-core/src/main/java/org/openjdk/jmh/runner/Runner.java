@@ -611,7 +611,11 @@ public class Runner extends BaseRunner {
         SortedSet<RunResult> result = new TreeSet<>(RunResult.DEFAULT_SORT_COMPARATOR);
         for (BenchmarkParams key : results.keys()) {
             Pair<List<Double>, List<Double>> thresholdPair = thresholds.get(key);
-            result.add(new RunResult(key, results.get(key), thresholdPair.getFirst(), thresholdPair.getSecond()));
+            if (thresholdPair == null) {
+                result.add(new RunResult(key, results.get(key), new ArrayList<Double>(), new ArrayList<Double>()));
+            } else {
+                result.add(new RunResult(key, results.get(key), thresholdPair.getFirst(), thresholdPair.getSecond()));
+            }
         }
         return result;
     }

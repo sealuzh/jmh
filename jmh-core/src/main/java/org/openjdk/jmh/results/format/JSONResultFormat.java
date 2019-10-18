@@ -144,6 +144,10 @@ class JSONResultFormat implements ResultFormat {
                 pw.println("}");
 
                 pw.println("},");
+
+                pw.println("\"warnings\" : {");
+                pw.println(tidy(getThresholdWarnings(runResult)));
+                pw.println("},");
             }
 
             Result primaryResult = runResult.getPrimaryResult();
@@ -229,6 +233,65 @@ class JSONResultFormat implements ResultFormat {
             }
         }
         sb.append(printMultiple(runs, "[", "]"));
+
+        return sb.toString();
+    }
+
+    private String getThresholdWarnings(RunResult runResult) {
+        BenchmarkParams params = runResult.getParams();
+
+        StringBuilder sb = new StringBuilder();
+
+        boolean warmupForkHasWarning = false;
+        if (runResult.getWarmupThresholds().size() > 0) {
+            Double lastWarmupForkItem = runResult.getWarmupThresholds().get(runResult.getWarmupThresholds().size() - 1);
+            // TODO threshold
+            double warmupForkThreshold = 0.05;
+            warmupForkHasWarning = runResult.getWarmupThresholds().size() == params.getMinWarmupForks() && lastWarmupForkItem != null && lastWarmupForkItem > warmupForkThreshold;
+        }
+        sb.append("\"warmupForks\" : " + warmupForkHasWarning + ",");
+
+        boolean measurementForkJasWarning = false;
+        if (runResult.getMeasurementThresholds().size() > 0) {
+            Double lastMeasurementForkItem = runResult.getMeasurementThresholds().get(runResult.getMeasurementThresholds().size() - 1);
+            // TODO threshold
+            double measurementForkThreshold = 0.05;
+            measurementForkJasWarning = runResult.getMeasurementThresholds().size() == params.getMinForks() && lastMeasurementForkItem != null && lastMeasurementForkItem > measurementForkThreshold;
+        }
+        sb.append("\"measurementForks\" : " + measurementForkJasWarning + ",");
+
+        Collection<String> warmupIterationList = new ArrayList<>();
+        Collection<String> measurementIterationList = new ArrayList<>();
+        for (BenchmarkResult benchmarkResult : runResult.getBenchmarkResults()) {
+            List<Double> warmupThresholds = benchmarkResult.getMetadata().getWarmupThresholds();
+            if (warmupThresholds.size() > 0) {
+                Double lastWarmupIterationItem = warmupThresholds.get(warmupThresholds.size() - 1);
+                // TODO threshold
+                double warmupIterationThreshold = 0.05;
+                boolean warmupIterationHasWarning = warmupThresholds.size() == params.getWarmup().getCount() && lastWarmupIterationItem != null && lastWarmupIterationItem > warmupIterationThreshold;
+                warmupIterationList.add(warmupIterationHasWarning ? "true" : "false");
+            }
+
+            List<Double> measurementThresholds = benchmarkResult.getMetadata().getMeasurementThresholds();
+            if (measurementThresholds.size() > 0) {
+                Double lastMeasurementIterationItem = measurementThresholds.get(measurementThresholds.size() - 1);
+                // TODO threshold
+                double measurementIterationThreshold = 0.00001;
+                boolean measurementIterationHasWarning = measurementThresholds.size() == params.getMeasurement().getCount() && lastMeasurementIterationItem != null && lastMeasurementIterationItem > measurementIterationThreshold;
+                measurementIterationList.add(measurementIterationHasWarning ? "true" : "false");
+            }
+        }
+
+        sb.append("\"warmupIterations\" : {");
+        sb.append(printMultiple(warmupIterationList, "[", "]"));
+        sb.append("},");
+
+        sb.append("\"measurementIterations\" : {");
+        sb.append(printMultiple(measurementIterationList, "[", "]"));
+        sb.append("},");
+
+        boolean totalHasWarning = warmupForkHasWarning || measurementForkJasWarning || warmupIterationList.contains("true") || measurementIterationList.contains("true");
+        sb.append("\"total\" : " + totalHasWarning);
 
         return sb.toString();
     }
