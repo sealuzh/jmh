@@ -25,6 +25,7 @@
 package org.openjdk.jmh.results;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class BenchmarkResultMetaData implements Serializable {
 
@@ -34,14 +35,18 @@ public class BenchmarkResultMetaData implements Serializable {
     private final long stopTime;
     private final long warmupOps;
     private final long measurementOps;
+    private final List<Double> warmupThresholds;
+    private final List<Double> measurementThresholds;
 
-    public BenchmarkResultMetaData(long warmupTime, long measurementTime, long stopTime, long warmupOps, long measurementOps) {
+    public BenchmarkResultMetaData(long warmupTime, long measurementTime, long stopTime, long warmupOps, long measurementOps, List<Double> warmupThresholds, List<Double> measurementThresholds) {
         this.startTime = Long.MIN_VALUE;
         this.warmupTime = warmupTime;
         this.measurementTime = measurementTime;
         this.stopTime = stopTime;
         this.warmupOps = warmupOps;
         this.measurementOps = measurementOps;
+        this.warmupThresholds = warmupThresholds;
+        this.measurementThresholds = measurementThresholds;
     }
 
     public long getStartTime() {
@@ -69,6 +74,14 @@ public class BenchmarkResultMetaData implements Serializable {
 
     public long getWarmupOps() {
         return warmupOps;
+    }
+
+    public List<Double> getWarmupThresholds() {
+        return warmupThresholds;
+    }
+
+    public List<Double> getMeasurementThresholds() {
+        return measurementThresholds;
     }
 
     public void adjustStart(long startTime) {

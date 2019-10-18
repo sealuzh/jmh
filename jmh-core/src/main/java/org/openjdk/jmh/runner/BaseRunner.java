@@ -27,6 +27,7 @@ package org.openjdk.jmh.runner;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.infra.IterationParams;
+import org.openjdk.jmh.reconfigure.IterationReconfigureManager;
 import org.openjdk.jmh.results.BenchmarkResult;
 import org.openjdk.jmh.results.BenchmarkResultMetaData;
 import org.openjdk.jmh.results.IterationResult;
@@ -35,7 +36,6 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.util.Multimap;
 import org.openjdk.jmh.util.TreeMultimap;
 import org.openjdk.jmh.util.Utils;
-import org.openjdk.jmh.util.Version;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -249,6 +249,8 @@ abstract class BaseRunner {
         long allWarmup = 0;
         long allMeasurement = 0;
 
+        IterationReconfigureManager rm = new IterationReconfigureManager(benchParams);
+
         // warmup
         IterationParams wp = benchParams.getWarmup();
         for (int i = 1; i <= wp.getCount(); i++) {
@@ -263,6 +265,11 @@ abstract class BaseRunner {
             out.iterationResult(benchParams, wp, i, ir);
 
             allWarmup += ir.getMetadata().getAllOps();
+
+            rm.addWarmupIteration(i, ir);
+            if(rm.checkWarmupIterationThreshold()){
+                break;
+            }
         }
 
         long measurementTime = System.currentTimeMillis();
@@ -284,6 +291,11 @@ abstract class BaseRunner {
 
             allMeasurement += ir.getMetadata().getAllOps();
 
+            rm.addMeasurementIteration(i, ir);
+            if(rm.checkMeasurementIterationThreshold()){
+                break;
+            }
+
             if (acceptor != null) {
                 acceptor.accept(ir);
             }
@@ -293,7 +305,7 @@ abstract class BaseRunner {
 
         BenchmarkResultMetaData md = new BenchmarkResultMetaData(
                 warmupTime, measurementTime, stopTime,
-                allWarmup, allMeasurement);
+                allWarmup, allMeasurement, rm.getWarmupThresholds(), rm.getMeasurementThresholds());
 
         if (acceptor != null) {
             acceptor.acceptMeta(md);

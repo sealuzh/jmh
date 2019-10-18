@@ -111,6 +111,44 @@ class JSONResultFormat implements ResultFormat {
                 pw.println("},");
             }
 
+            if (reconfigure) {
+                pw.println("\"thresholds\" : {");
+
+                Collection<String> warmupIterationList = new ArrayList<>();
+                Collection<String> measurementIterationList = new ArrayList<>();
+                for (BenchmarkResult benchmarkResult : runResult.getBenchmarkResults()) {
+                    Collection<String> warmupThresholds = new ArrayList<>();
+                    for (Double threshold : benchmarkResult.getMetadata().getWarmupThresholds()) {
+                        if (threshold == null) {
+                            warmupThresholds.add(null);
+                        } else {
+                            warmupThresholds.add(threshold.toString());
+                        }
+                    }
+                    warmupIterationList.add(printMultiple(warmupThresholds, "[", "]"));
+
+                    Collection<String> measurementThresholds = new ArrayList<>();
+                    for (Double threshold : benchmarkResult.getMetadata().getMeasurementThresholds()) {
+                        if (threshold == null) {
+                            measurementThresholds.add(null);
+                        } else {
+                            measurementThresholds.add(threshold.toString());
+                        }
+                    }
+                    measurementIterationList.add(printMultiple(measurementThresholds, "[", "]"));
+                }
+
+                pw.println("\"warmupIterations\" : {");
+                pw.println(printMultiple(warmupIterationList, "[", "]"));
+                pw.println("},");
+
+                pw.println("\"measurementIterations\" : {");
+                pw.println(printMultiple(measurementIterationList, "[", "]"));
+                pw.println("}");
+
+                pw.println("},");
+            }
+
             Result primaryResult = runResult.getPrimaryResult();
             pw.println("\"primaryMetric\" : {");
             pw.println("\"score\" : " + emit(primaryResult.getScore()) + ",");
