@@ -71,7 +71,7 @@ public class IterationScoresFormatter implements OutputFormat {
     }
 
     @Override
-    public void endRun(Collection<RunResult> result) {
+    public void endRun(Collection<RunResult> result, boolean atLeastOneWarning) {
 
     }
 
