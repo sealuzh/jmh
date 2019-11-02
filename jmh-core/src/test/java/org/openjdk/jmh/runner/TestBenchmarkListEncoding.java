@@ -26,6 +26,7 @@ package org.openjdk.jmh.runner;
 
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.util.Optional;
 
@@ -61,6 +62,10 @@ public class TestBenchmarkListEncoding {
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),
+                ReconfigureMode.CI,
+                Optional.<Double>none(),
+                Optional.<Double>none(),
+                Optional.<Double>none(),
                 Optional.<String>none(),
                 Optional.<Collection<String>>none(),
                 Optional.<Collection<String>>none(),

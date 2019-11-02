@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner.options;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.util.Optional;
 
@@ -221,6 +222,34 @@ public interface Options extends Serializable {
      * @see org.openjdk.jmh.annotations.Fork
      */
     Optional<Integer> getMinWarmupForkCount();
+
+    /**
+     * reconfigure mode
+     * @return reconfigure mode
+     * @see org.openjdk.jmh.annotations.ReconfigureMode
+     */
+    Optional<ReconfigureMode> getReconfigureMode();
+
+    /**
+     * coefficient of variation variability threshold
+     * @return threshold
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     */
+    Optional<Double> getReconfigureCovThreshold();
+
+    /**
+     * confidence interval variability threshold
+     * @return threshold
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     */
+    Optional<Double> getReconfigureCiThreshold();
+
+    /**
+     * p value of kullback leibler divergence as variability threshold
+     * @return threshold
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     */
+    Optional<Double> getReconfigureKldThreshold();
 
     /**
      * JVM executable to use for forks

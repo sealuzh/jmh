@@ -26,6 +26,7 @@ package org.openjdk.jmh.runner.options;
 
 import joptsimple.*;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.profile.ProfilerFactory;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Defaults;
@@ -67,6 +68,10 @@ public class CommandLineOptions implements Options {
     private final Optional<Integer> minFork;
     private final Optional<Integer> warmupFork;
     private final Optional<Integer> minWarmupFork;
+    private final Optional<ReconfigureMode> reconfigureMode;
+    private final Optional<Double> reconfigureCovThreshold;
+    private final Optional<Double> reconfigureCiThreshold;
+    private final Optional<Double> reconfigureKldThreshold;
     private final Optional<String> output;
     private final Optional<String> result;
     private final Optional<ResultFormatType> resultFormat;
@@ -192,6 +197,22 @@ public class CommandLineOptions implements Options {
         OptionSpec<Integer> optMinWarmupForks = parser.accepts("mwf", "How many warmup forks to make for a single benchmark at least. " +
                 "(default: " + Defaults.MIN_WARMUP_FORKS + ")")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.NON_NEGATIVE).describedAs("int");
+
+        OptionSpec<String> optReconfigureMode = parser.accepts("rm", "Reconfigure mode. Available modes are: " + ReconfigureMode.getKnown() + ". " +
+                "(default: " + Defaults.RECONFIGURE_MODE + ")")
+                .withRequiredArg().ofType(String.class).withValuesSeparatedBy(',').describedAs("mode");
+
+        OptionSpec<Double> optReconfigureCovThreshold = parser.accepts("rcov", "coefficient of variation variability threshold " +
+                "(default: " + Defaults.RECONFIGURE_COV_THRESHOLD + ")")
+                .withRequiredArg().withValuesConvertedBy(DoubleValueConverter.PROBABILITY).describedAs("double");
+
+        OptionSpec<Double> optReconfigureCiThreshold = parser.accepts("rci", "confidence interval variability threshold " +
+                "(default: " + Defaults.RECONFIGURE_CI_THRESHOLD + ")")
+                .withRequiredArg().withValuesConvertedBy(DoubleValueConverter.NON_NEGATIVE).describedAs("double");
+
+        OptionSpec<Double> optReconfigureKldThreshold = parser.accepts("rkld", "p value of kullback leibler divergence as variability threshold " +
+                "(default: " + Defaults.RECONFIGURE_KLD_THRESHOLD + ")")
+                .withRequiredArg().withValuesConvertedBy(DoubleValueConverter.PROBABILITY).describedAs("double");
 
         OptionSpec<String> optOutput = parser.accepts("o", "Redirect human-readable output to a given file.")
                 .withRequiredArg().ofType(String.class).describedAs("filename");
@@ -349,6 +370,20 @@ public class CommandLineOptions implements Options {
             minWarmupFork = toOptional(optMinWarmupForks, set);
             output = toOptional(optOutput, set);
             result = toOptional(optOutputResults, set);
+
+            if (set.has(optReconfigureMode)) {
+                try {
+                    reconfigureMode = Optional.of(ReconfigureMode.deepValueOf(optReconfigureMode.value(set)));
+                } catch (IllegalArgumentException iae) {
+                    throw new CommandLineOptionException(iae.getMessage(), iae);
+                }
+            } else {
+                reconfigureMode = Optional.none();
+            }
+
+            reconfigureCovThreshold = toOptional(optReconfigureCovThreshold, set);
+            reconfigureCiThreshold = toOptional(optReconfigureCiThreshold, set);
+            reconfigureKldThreshold = toOptional(optReconfigureKldThreshold, set);
 
             if (set.has(optBenchmarkMode)) {
                 try {
@@ -630,6 +665,26 @@ public class CommandLineOptions implements Options {
     @Override
     public Optional<Integer> getWarmupBatchSize() {
         return warmupBatchSize;
+    }
+
+    @Override
+    public Optional<ReconfigureMode> getReconfigureMode() {
+        return reconfigureMode;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureCovThreshold() {
+        return reconfigureCovThreshold;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureCiThreshold() {
+        return reconfigureCiThreshold;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureKldThreshold() {
+        return reconfigureKldThreshold;
     }
 
     @Override

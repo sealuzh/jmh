@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.runner.options.VerboseMode;
@@ -172,4 +173,23 @@ public class Defaults {
      */
     public static final String INCLUDE_BENCHMARKS = ".*";
 
+    /**
+     * Default reconfigure mode.
+     */
+    public static final ReconfigureMode RECONFIGURE_MODE = ReconfigureMode.COV;
+
+    /**
+     * coefficient of variation variability threshold.
+     */
+    public static final double RECONFIGURE_COV_THRESHOLD = 0.01;
+
+    /**
+     * confidence interval variability threshold.
+     */
+    public static final double RECONFIGURE_CI_THRESHOLD = 0.03;
+
+    /**
+     * p value of kullback leibler divergence as variability threshold.
+     */
+    public static final double RECONFIGURE_KLD_THRESHOLD = 0.99;
 }

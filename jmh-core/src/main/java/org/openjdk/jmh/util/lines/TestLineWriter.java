@@ -72,6 +72,15 @@ public class TestLineWriter {
         }
     }
 
+    public void putOptionalDouble(Optional<Double> opt) {
+        if (!opt.hasValue()) {
+            appendTag(TAG_EMPTY_OPTIONAL);
+        } else {
+            appendTag(TAG_DOUBLE);
+            appendWithLen(String.valueOf(opt.get()));
+        }
+    }
+
     public void putOptionalString(Optional<String> opt) {
         if (!opt.hasValue()) {
             appendTag(TAG_EMPTY_OPTIONAL);

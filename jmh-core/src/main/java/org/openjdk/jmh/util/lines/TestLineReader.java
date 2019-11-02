@@ -100,6 +100,17 @@ public class TestLineReader {
         }
     }
 
+    public Optional<Double> nextOptionalDouble() {
+        char tag = readChar();
+        if (tag == Constants.TAG_EMPTY_OPTIONAL) {
+            return Optional.none();
+        } else if (tag == TAG_DOUBLE) {
+            return Optional.of(Double.valueOf(readString()));
+        } else {
+            throw error("unexpected tag = " + tag);
+        }
+    }
+
     public Optional<String> nextOptionalString() {
         char tag = readChar();
         if (tag == Constants.TAG_EMPTY_OPTIONAL) {

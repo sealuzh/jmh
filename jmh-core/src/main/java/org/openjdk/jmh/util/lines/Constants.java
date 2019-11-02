@@ -31,6 +31,7 @@ public class Constants {
     public static final char TAG_EMPTY_OPTIONAL     = 'E';
     public static final char TAG_STRING             = 'S';
     public static final char TAG_INT                = 'I';
+    public static final char TAG_DOUBLE             = 'D';
     public static final char TAG_TIMEVALUE          = 'T';
     public static final char TAG_STRING_COLLECTION  = 'L';
     public static final char TAG_INT_ARRAY          = 'A';

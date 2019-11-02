@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.util.Optional;
 import org.openjdk.jmh.util.lines.TestLineReader;
@@ -55,6 +56,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     private final Optional<Integer> minForks;
     private final Optional<Integer> warmupForks;
     private final Optional<Integer> minWarmupForks;
+    private final ReconfigureMode reconfigureMode;
+    private final Optional<Double> reconfigureCovThreshold;
+    private final Optional<Double> reconfigureCiThreshold;
+    private final Optional<Double> reconfigureKldThreshold;
     private final Optional<String> jvm;
     private final Optional<Collection<String>> jvmArgs;
     private final Optional<Collection<String>> jvmArgsPrepend;
@@ -71,6 +76,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
                               Optional<Integer> warmupIterations, Optional<Integer> minWarmupIterations, Optional<TimeValue> warmupTime, Optional<Integer> warmupBatchSize,
                               Optional<Integer> measurementIterations, Optional<TimeValue> measurementTime, Optional<Integer> measurementBatchSize,
                               Optional<Integer> forks, Optional<Integer> minForks, Optional<Integer> warmupForks, Optional<Integer> minWarmupForks,
+                              ReconfigureMode reconfigureMode, Optional<Double> reconfigureCovThreshold, Optional<Double> reconfigureCiThreshold,  Optional<Double> reconfigureKldThreshold,
                               Optional<String> jvm, Optional<Collection<String>> jvmArgs, Optional<Collection<String>> jvmArgsPrepend, Optional<Collection<String>> jvmArgsAppend,
                               Optional<Map<String, String[]>> params, Optional<TimeUnit> tu, Optional<Integer> opsPerInv,
                               Optional<TimeValue> timeout) {
@@ -92,6 +98,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         this.minForks = minForks;
         this.warmupForks = warmupForks;
         this.minWarmupForks = minWarmupForks;
+        this.reconfigureMode = reconfigureMode;
+        this.reconfigureCovThreshold = reconfigureCovThreshold;
+        this.reconfigureCiThreshold = reconfigureCiThreshold;
+        this.reconfigureKldThreshold = reconfigureKldThreshold;
         this.jvm = jvm;
         this.jvmArgs = jvmArgs;
         this.jvmArgsPrepend = jvmArgsPrepend;
@@ -130,6 +140,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         this.minForks                   = reader.nextOptionalInt();
         this.warmupForks                = reader.nextOptionalInt();
         this.minWarmupForks             = reader.nextOptionalInt();
+        this.reconfigureMode            = ReconfigureMode.deepValueOf(reader.nextString());
+        this.reconfigureCovThreshold    = reader.nextOptionalDouble();
+        this.reconfigureCiThreshold     = reader.nextOptionalDouble();
+        this.reconfigureKldThreshold    = reader.nextOptionalDouble();
         this.jvm                        = reader.nextOptionalString();
         this.jvmArgs                    = reader.nextOptionalStringCollection();
         this.jvmArgsPrepend             = reader.nextOptionalStringCollection();
@@ -161,6 +175,10 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         writer.putOptionalInt(minForks);
         writer.putOptionalInt(warmupForks);
         writer.putOptionalInt(minWarmupForks);
+        writer.putString(reconfigureMode.toString());
+        writer.putOptionalDouble(reconfigureCovThreshold);
+        writer.putOptionalDouble(reconfigureCiThreshold);
+        writer.putOptionalDouble(reconfigureKldThreshold);
         writer.putOptionalString(jvm);
         writer.putOptionalStringCollection(jvmArgs);
         writer.putOptionalStringCollection(jvmArgsPrepend);
@@ -179,6 +197,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
                 minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
                 measurementIterations, measurementTime, measurementBatchSize,
                 forks, minForks, warmupForks, minWarmupForks,
+                reconfigureMode, reconfigureCovThreshold, reconfigureCiThreshold,  reconfigureKldThreshold,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
                 timeout);
@@ -190,6 +209,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
                 minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
                 measurementIterations, measurementTime, measurementBatchSize,
                 forks, minForks, warmupForks, minWarmupForks,
+                reconfigureMode, reconfigureCovThreshold, reconfigureCiThreshold,  reconfigureKldThreshold,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
                 timeout);
@@ -315,6 +335,22 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
 
     public Optional<Integer> getMinWarmupForks() {
         return minWarmupForks;
+    }
+
+    public ReconfigureMode getReconfigureMode() {
+        return reconfigureMode;
+    }
+
+    public Optional<Double> getReconfigureCovThreshold() {
+        return reconfigureCovThreshold;
+    }
+
+    public Optional<Double> getReconfigureCiThreshold() {
+        return reconfigureCiThreshold;
+    }
+
+    public Optional<Double> getReconfigureKldThreshold() {
+        return reconfigureKldThreshold;
     }
 
     public Optional<String> getJvm() {

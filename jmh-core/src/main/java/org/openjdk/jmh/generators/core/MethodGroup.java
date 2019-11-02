@@ -25,6 +25,7 @@
 package org.openjdk.jmh.generators.core;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.runner.Defaults;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.util.Optional;
 
@@ -257,6 +258,40 @@ class MethodGroup implements Comparable<MethodGroup> {
         for (Fork ann : getAll(Fork.class)) {
             if (ann.minWarmups() != Fork.BLANK_FORKS) {
                 return Optional.of(ann.minWarmups());
+            }
+        }
+        return Optional.none();
+    }
+
+    public ReconfigureMode getReconfigureMode() {
+        for (Reconfigure ann : getAll(Reconfigure.class)) {
+            return ann.value();
+        }
+        return Defaults.RECONFIGURE_MODE;
+    }
+
+    public Optional<Double> getReconfigureCovThreshold() {
+        for (Reconfigure ann : getAll(Reconfigure.class)) {
+            if (ann.covThreshold() != Reconfigure.BLANK_THRESHOLD) {
+                return Optional.of(ann.covThreshold());
+            }
+        }
+        return Optional.none();
+    }
+
+    public Optional<Double> getReconfigureCiThreshold() {
+        for (Reconfigure ann : getAll(Reconfigure.class)) {
+            if (ann.ciThreshold() != Reconfigure.BLANK_THRESHOLD) {
+                return Optional.of(ann.ciThreshold());
+            }
+        }
+        return Optional.none();
+    }
+
+    public Optional<Double> getReconfigureKldThreshold() {
+        for (Reconfigure ann : getAll(Reconfigure.class)) {
+            if (ann.kldThreshold() != Reconfigure.BLANK_THRESHOLD) {
+                return Optional.of(ann.kldThreshold());
             }
         }
         return Optional.none();

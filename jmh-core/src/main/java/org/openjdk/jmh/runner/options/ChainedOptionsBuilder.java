@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner.options;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.profile.Profiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 
@@ -307,13 +308,48 @@ public interface ChainedOptionsBuilder {
 
     /**
      * Minimum number of ignored forks
-     * @param minimum value number of ignored forks
+     * @param value minimum value number of ignored forks
      * @return builder
      * @see org.openjdk.jmh.annotations.Fork
      * @see org.openjdk.jmh.runner.Defaults#MIN_WARMUP_FORKS
      */
     ChainedOptionsBuilder minWarmupForks(int value);
 
+    /**
+     * Reconfigure mode
+     * @param mode reconfigure mode
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     * @see org.openjdk.jmh.runner.Defaults#RECONFIGURE_MODE
+     */
+    ChainedOptionsBuilder reconfigureMode(ReconfigureMode mode);
+
+    /**
+     * coefficient of variation variability threshold
+     * @param value threshold
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     * @see org.openjdk.jmh.runner.Defaults#RECONFIGURE_COV_THRESHOLD
+     */
+    ChainedOptionsBuilder reconfigureCovThreshold(double value);
+
+    /**
+     * confidence interval variability threshold
+     * @param value threshold
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     * @see org.openjdk.jmh.runner.Defaults#RECONFIGURE_CI_THRESHOLD
+     */
+    ChainedOptionsBuilder reconfigureCiThreshold(double value);
+
+    /**
+     * p value of kullback leibler divergence as variability threshold
+     * @param value threshold
+     * @return builder
+     * @see org.openjdk.jmh.annotations.Reconfigure
+     * @see org.openjdk.jmh.runner.Defaults#RECONFIGURE_KLD_THRESHOLD
+     */
+    ChainedOptionsBuilder reconfigureKldThreshold(double value);
     /**
      * Forked JVM to use.
      *

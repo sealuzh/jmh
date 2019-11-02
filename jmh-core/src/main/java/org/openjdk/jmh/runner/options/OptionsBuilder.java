@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner.options;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.profile.Profiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
@@ -67,6 +68,22 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
         } else {
             message += "greater or equal than " + minValue;
         }
+        throw new IllegalArgumentException(message);
+    }
+
+    private static void checkGreaterOrEqual(double value, double minValue, String s) {
+        if (value >= minValue) {
+            return;
+        }
+        String message = s + " (" + value + ") should be greater or equal than " + minValue;
+        throw new IllegalArgumentException(message);
+    }
+
+    private static void checkLessOrEqual(double value, double minValue, String s) {
+        if (value <= minValue) {
+            return;
+        }
+        String message = s + " (" + value + ") should be less or equal than " + minValue;
         throw new IllegalArgumentException(message);
     }
 
@@ -509,7 +526,6 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
         }
     }
 
-
     // ---------------------------------------------------------------------------
 
     private final EnumSet<Mode> benchModes = EnumSet.noneOf(Mode.class);
@@ -645,6 +661,90 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
             return minWarmupForks.orAnother(otherOptions.getMinWarmupForkCount());
         } else {
             return minWarmupForks;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<ReconfigureMode> reconfigureMode = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder reconfigureMode(ReconfigureMode value) {
+        if(value.equals(ReconfigureMode.NONE)){
+            throw new IllegalArgumentException("None is as reconfigure mode not allowed");
+        }
+        this.reconfigureMode = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<ReconfigureMode> getReconfigureMode() {
+        if (otherOptions != null) {
+            return reconfigureMode.orAnother(otherOptions.getReconfigureMode());
+        } else {
+            return reconfigureMode;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<Double> reconfigureCovThreshold = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder reconfigureCovThreshold(double value) {
+        checkGreaterOrEqual(value, 0, "reconfigure cov threshold");
+        checkLessOrEqual(value, 1, "reconfigure cov threshold");
+        this.reconfigureCovThreshold = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureCovThreshold() {
+        if (otherOptions != null) {
+            return reconfigureCovThreshold.orAnother(otherOptions.getReconfigureCovThreshold());
+        } else {
+            return reconfigureCovThreshold;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<Double> reconfigureCiThreshold = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder reconfigureCiThreshold(double value) {
+        checkGreaterOrEqual(value, 0, "reconfigure ci threshold");
+        this.reconfigureCiThreshold = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureCiThreshold() {
+        if (otherOptions != null) {
+            return reconfigureCiThreshold.orAnother(otherOptions.getReconfigureCiThreshold());
+        } else {
+            return reconfigureCiThreshold;
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+
+    private Optional<Double> reconfigureKldThreshold = Optional.none();
+
+    @Override
+    public ChainedOptionsBuilder reconfigureKldThreshold(double value) {
+        checkGreaterOrEqual(value, 0, "reconfigure kld threshold");
+        checkLessOrEqual(value, 1, "reconfigure kld threshold");
+        this.reconfigureKldThreshold = Optional.of(value);
+        return this;
+    }
+
+    @Override
+    public Optional<Double> getReconfigureKldThreshold() {
+        if (otherOptions != null) {
+            return reconfigureKldThreshold.orAnother(otherOptions.getReconfigureKldThreshold());
+        } else {
+            return reconfigureKldThreshold;
         }
     }
 

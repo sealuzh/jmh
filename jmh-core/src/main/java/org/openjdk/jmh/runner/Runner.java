@@ -26,6 +26,7 @@ package org.openjdk.jmh.runner;
 
 import org.apache.commons.math3.util.Pair;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.infra.IterationParams;
@@ -481,6 +482,29 @@ public class Runner extends BaseRunner {
                 benchmark.getMinWarmupForks().orElse(
                         Defaults.MIN_WARMUP_FORKS));
 
+        ReconfigureMode reconfigureMode;
+        if(!options.getReconfigureMode().hasValue() || options.getReconfigureMode().get().isNone()){
+            if(benchmark.getReconfigureMode().isNone()){
+                reconfigureMode = Defaults.RECONFIGURE_MODE;
+            }else{
+                reconfigureMode = benchmark.getReconfigureMode();
+            }
+        }else{
+            reconfigureMode = options.getReconfigureMode().get();
+        }
+
+        double reconfigureCovThreshold = options.getReconfigureCovThreshold().orElse(
+                benchmark.getReconfigureCovThreshold().orElse(
+                        Defaults.RECONFIGURE_COV_THRESHOLD));
+
+        double reconfigureCiThreshold = options.getReconfigureCiThreshold().orElse(
+                benchmark.getReconfigureCiThreshold().orElse(
+                        Defaults.RECONFIGURE_CI_THRESHOLD));
+
+        double reconfigureKldThreshold = options.getReconfigureKldThreshold().orElse(
+                benchmark.getReconfigureKldThreshold().orElse(
+                        Defaults.RECONFIGURE_KLD_THRESHOLD));
+
         TimeUnit timeUnit = options.getTimeUnit().orElse(
                 benchmark.getTimeUnit().orElse(
                         Defaults.OUTPUT_TIMEUNIT));
@@ -519,8 +543,9 @@ public class Runner extends BaseRunner {
         return new BenchmarkParams(benchmark.getUsername(), benchmark.generatedTarget(), synchIterations,
                 threads, threadGroups, benchmark.getThreadGroupLabels().orElse(Collections.<String>emptyList()),
                 forks, minForks, warmupForks, minWarmupForks,
-                warmup, measurement, benchmark.getMode(), benchmark.getWorkloadParams(), timeUnit, opsPerInvocation,
-                jvm, jvmArgs,
+                warmup, measurement, benchmark.getMode(), reconfigureMode, reconfigureCovThreshold,
+                reconfigureCiThreshold, reconfigureKldThreshold, benchmark.getWorkloadParams(),
+                timeUnit, opsPerInvocation, jvm, jvmArgs,
                 jdkVersion, vmName, vmVersion, Version.getPlainVersion(),
                 timeout);
     }

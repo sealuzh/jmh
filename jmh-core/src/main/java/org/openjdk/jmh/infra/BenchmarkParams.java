@@ -25,6 +25,7 @@
 package org.openjdk.jmh.infra;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.runner.WorkloadParams;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.util.Utils;
@@ -68,7 +69,8 @@ public class BenchmarkParams extends BenchmarkParamsL4 {
                            int threads, int[] threadGroups, Collection<String> threadGroupLabels,
                            int forks, int minForks, int warmupForks, int minWarmupForks,
                            IterationParams warmup, IterationParams measurement,
-                           Mode mode, WorkloadParams params,
+                           Mode mode, ReconfigureMode reconfigureMode, double reconfigureCovThreshold,
+                           double reconfigureCiThreshold,  double reconfigureKldThreshold, WorkloadParams params,
                            TimeUnit timeUnit, int opsPerInvocation,
                            String jvm, Collection<String> jvmArgs,
                            String jdkVersion, String vmName, String vmVersion, String jmhVersion,
@@ -77,7 +79,8 @@ public class BenchmarkParams extends BenchmarkParamsL4 {
                 threads, threadGroups, threadGroupLabels,
                 forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
-                mode, params,
+                mode, reconfigureMode, reconfigureCovThreshold,
+                reconfigureCiThreshold,  reconfigureKldThreshold, params,
                 timeUnit, opsPerInvocation,
                 jvm, jvmArgs,
                 jdkVersion, vmName, vmVersion, jmhVersion,
@@ -93,7 +96,8 @@ abstract class BenchmarkParamsL4 extends BenchmarkParamsL3 {
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
                              int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
-                             Mode mode, WorkloadParams params,
+                             Mode mode, ReconfigureMode reconfigureMode, double reconfigureCovThreshold,
+                             double reconfigureCiThreshold,  double reconfigureKldThreshold, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
                              String jvm, Collection<String> jvmArgs,
                              String jdkVersion, String vmName, String vmVersion, String jmhVersion,
@@ -102,7 +106,8 @@ abstract class BenchmarkParamsL4 extends BenchmarkParamsL3 {
                 threads, threadGroups, threadGroupLabels,
                 forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
-                mode, params,
+                mode, reconfigureMode, reconfigureCovThreshold,
+                reconfigureCiThreshold,  reconfigureKldThreshold, params,
                 timeUnit, opsPerInvocation,
                 jvm, jvmArgs,
                 jdkVersion, vmName, vmVersion, jmhVersion,
@@ -134,7 +139,8 @@ abstract class BenchmarkParamsL3 extends BenchmarkParamsL2 {
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
                              int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
-                             Mode mode, WorkloadParams params,
+                             Mode mode, ReconfigureMode reconfigureMode, double reconfigureCovThreshold,
+                             double reconfigureCiThreshold,  double reconfigureKldThreshold, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
                              String jvm, Collection<String> jvmArgs,
                              String jdkVersion, String vmName, String vmVersion, String jmhVersion,
@@ -143,7 +149,8 @@ abstract class BenchmarkParamsL3 extends BenchmarkParamsL2 {
                 threads, threadGroups, threadGroupLabels,
                 forks, minForks, warmupForks, minWarmupForks,
                 warmup, measurement,
-                mode, params,
+                mode, reconfigureMode, reconfigureCovThreshold,
+                reconfigureCiThreshold,  reconfigureKldThreshold, params,
                 timeUnit, opsPerInvocation,
                 jvm, jvmArgs,
                 jdkVersion, vmName, vmVersion, jmhVersion,
@@ -190,6 +197,10 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
     protected final IterationParams warmup;
     protected final IterationParams measurement;
     protected final Mode mode;
+    protected final ReconfigureMode reconfigureMode;
+    protected final double reconfigureCovThreshold;
+    protected final double reconfigureCiThreshold;
+    protected final double reconfigureKldThreshold;
     protected final WorkloadParams params;
     protected final TimeUnit timeUnit;
     protected final int opsPerInvocation;
@@ -205,7 +216,8 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
                              int threads, int[] threadGroups, Collection<String> threadGroupLabels,
                              int forks, int minForks, int warmupForks, int minWarmupForks,
                              IterationParams warmup, IterationParams measurement,
-                             Mode mode, WorkloadParams params,
+                             Mode mode, ReconfigureMode reconfigureMode, double reconfigureCovThreshold,
+                             double reconfigureCiThreshold,  double reconfigureKldThreshold, WorkloadParams params,
                              TimeUnit timeUnit, int opsPerInvocation,
                              String jvm, Collection<String> jvmArgs,
                              String jdkVersion, String vmName, String vmVersion, String jmhVersion,
@@ -223,6 +235,10 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
         this.warmup = warmup;
         this.measurement = measurement;
         this.mode = mode;
+        this.reconfigureMode = reconfigureMode;
+        this.reconfigureCovThreshold = reconfigureCovThreshold;
+        this.reconfigureCiThreshold = reconfigureCiThreshold;
+        this.reconfigureKldThreshold = reconfigureKldThreshold;
         this.params = params;
         this.timeUnit = timeUnit;
         this.opsPerInvocation = opsPerInvocation;
@@ -319,6 +335,34 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
      */
     public Mode getMode() {
         return mode;
+    }
+
+    /**
+     * @return reconfigure mode
+     */
+    public ReconfigureMode getReconfigureMode() {
+        return reconfigureMode;
+    }
+
+    /**
+     * @return coefficient of variation variability threshold
+     */
+    public double getReconfigureCovThreshold() {
+        return reconfigureCovThreshold;
+    }
+
+    /**
+     * @return confidence interval variability threshold
+     */
+    public double getReconfigureCiThreshold() {
+        return reconfigureCiThreshold;
+    }
+
+    /**
+     * @return p value of kullback leibler divergence as variability threshold
+     */
+    public double getReconfigureKldThreshold() {
+        return reconfigureKldThreshold;
     }
 
     /**

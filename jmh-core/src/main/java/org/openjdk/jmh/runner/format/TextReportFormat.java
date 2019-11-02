@@ -25,6 +25,7 @@
 package org.openjdk.jmh.runner.format;
 
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.infra.IterationParams;
 import org.openjdk.jmh.results.BenchmarkResult;
@@ -138,6 +139,18 @@ class TextReportFormat extends AbstractOutputFormat {
                 s += k + " = " + params.getParam(k);
             }
             out.println("# Parameters: (" + s + ")");
+        }
+
+        if(params.getMode().equals(Mode.Reconfigure)){
+            out.println("# Reconfigure mode: " + params.getReconfigureMode().longLabel());
+
+            if(params.getReconfigureMode().equals(ReconfigureMode.COV)){
+                out.println("# COV threshold: " + params.getReconfigureCovThreshold());
+            }else if(params.getReconfigureMode().equals(ReconfigureMode.CI)){
+                out.println("# CI threshold: " + params.getReconfigureCiThreshold());
+            }else{
+                out.println("# Kullback leibler divergence p value threshold: " + params.getReconfigureKldThreshold());
+            }
         }
     }
 

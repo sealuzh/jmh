@@ -27,6 +27,7 @@ package org.openjdk.jmh.runner;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.ReconfigureMode;
 import org.openjdk.jmh.runner.format.OutputFormat;
 import org.openjdk.jmh.runner.format.OutputFormatFactory;
 import org.openjdk.jmh.runner.options.TimeValue;
@@ -67,6 +68,10 @@ public class TestBenchmarkList {
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),
+                ReconfigureMode.CI,
+                Optional.<Double>none(),
+                Optional.<Double>none(),
+                Optional.<Double>none(),
                 Optional.<String>none(),
                 Optional.<Collection<String>>none(),
                 Optional.<Collection<String>>none(),

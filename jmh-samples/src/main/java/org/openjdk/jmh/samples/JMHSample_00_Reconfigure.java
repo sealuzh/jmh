@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class JMHSample_00_Reconfigure {
 
     @Benchmark
+    @Reconfigure(value = ReconfigureMode.DIVERGENCE, covThreshold = 0.07, ciThreshold = 0.08, kldThreshold = 0.09)
     @Warmup(minIterations = 11, time = 1, timeUnit = TimeUnit.MICROSECONDS)
     @Measurement(time = 1, timeUnit = TimeUnit.MICROSECONDS)
     @BenchmarkMode(Mode.Reconfigure)
