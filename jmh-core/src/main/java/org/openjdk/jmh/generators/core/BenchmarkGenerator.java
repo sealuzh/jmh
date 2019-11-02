@@ -533,6 +533,7 @@ public class BenchmarkGenerator {
                 generateAverageTime(writer, benchmarkKind, methodGroup, states);
                 break;
             case SampleTime:
+            case Reconfigure:
                 generateSampleTime(writer, benchmarkKind, methodGroup, states);
                 break;
             case SingleShotTime:

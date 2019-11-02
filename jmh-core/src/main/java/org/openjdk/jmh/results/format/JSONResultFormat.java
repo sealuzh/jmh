@@ -24,6 +24,7 @@
  */
 package org.openjdk.jmh.results.format;
 
+import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.results.BenchmarkResult;
 import org.openjdk.jmh.results.IterationResult;
@@ -58,12 +59,10 @@ class JSONResultFormat implements ResultFormat {
 
         boolean first = true;
 
-        // TODO
-        boolean reconfigure = false;
-
         pw.println("[");
         for (RunResult runResult : results) {
             BenchmarkParams params = runResult.getParams();
+            boolean isReconfigureMode = params.getMode().equals(Mode.Reconfigure);
 
             if (first) {
                 first = false;
@@ -78,11 +77,11 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"mode\" : \"" + params.getMode().shortLabel() + "\",");
             pw.println("\"threads\" : " + params.getThreads() + ",");
             pw.println("\"forks\" : " + params.getForks() + ",");
-            if (reconfigure){
+            if (isReconfigureMode){
                 pw.println("\"minForks\" : " + params.getMinForks() + ",");
             }
             pw.println("\"warmupForks\" : " + params.getWarmupForks() + ",");
-            if (reconfigure){
+            if (isReconfigureMode){
                 pw.println("\"minWarmupForks\" : " + params.getMinWarmupForks() + ",");
             }
             pw.println("\"jvm\" : " + toJsonString(params.getJvm()) + ",");
@@ -94,7 +93,7 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"vmName\" : " + toJsonString(params.getVmName()) + ",");
             pw.println("\"vmVersion\" : " + toJsonString(params.getVmVersion()) + ",");
             pw.println("\"warmupIterations\" : " + params.getWarmup().getCount() + ",");
-            if (reconfigure){
+            if (isReconfigureMode){
                 pw.println("\"minWarmupIterations\" : " + params.getWarmup().getMinCount() + ",");
             }
             pw.println("\"warmupTime\" : \"" + params.getWarmup().getTime() + "\",");
@@ -109,7 +108,7 @@ class JSONResultFormat implements ResultFormat {
                 pw.println("},");
             }
 
-            if (reconfigure) {
+            if (isReconfigureMode) {
                 pw.println("\"thresholds\" : {");
 
                 pw.println("\"warmupForks\" : ");
@@ -149,6 +148,7 @@ class JSONResultFormat implements ResultFormat {
 
             switch (params.getMode()) {
                 case SampleTime:
+                case Reconfigure:
                     pw.println("\"rawDataHistogram\" :");
                     pw.println(getRawData(runResult, true));
                     break;
@@ -261,9 +261,9 @@ class JSONResultFormat implements ResultFormat {
             }
         }
 
-        sb.append("\"warmupIterations\" : {");
+        sb.append("\"warmupIterations\" : ");
         sb.append(printMultiple(warmupIterationList, "[", "]"));
-        sb.append("},");
+        sb.append(",");
 
         boolean totalHasWarning = warmupForkHasWarning || measurementForkJasWarning || warmupIterationList.contains("true");
         sb.append("\"total\" : " + totalHasWarning);

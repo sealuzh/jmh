@@ -14,7 +14,7 @@ public class JMHSample_00_Reconfigure {
     @Benchmark
     @Warmup(minIterations = 11, time = 1, timeUnit = TimeUnit.MICROSECONDS)
     @Measurement(time = 1, timeUnit = TimeUnit.MICROSECONDS)
-    @BenchmarkMode(Mode.AverageTime)
+    @BenchmarkMode(Mode.Reconfigure)
     @Fork(minWarmups = 7, minValue = 9)
     public void wellHelloThere() {
         // this method was intentionally left blank.

@@ -62,6 +62,11 @@ public enum Mode {
     SampleTime("sample", "Sampling time"),
 
     /**
+     * <p>Dynamic reconfigure: runs the {@link #SampleTime} mode but dynamically decide then to stop the data collection.</p>
+     */
+    Reconfigure("re", "Dynamic reconfigure"),
+
+    /**
      * <p>Single shot time: measures the time for a single operation.</p>
      *
      * <p>Runs by calling {@link Benchmark} once and measuring its time.
