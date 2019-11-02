@@ -208,15 +208,6 @@ class MethodGroup implements Comparable<MethodGroup> {
         return Optional.none();
     }
 
-    public Optional<Integer> getMinMeasurementIterations() {
-        for (Measurement ann : getAll(Measurement.class)) {
-            if (ann.minIterations() != Measurement.BLANK_MIN_ITERATIONS) {
-                return Optional.of(ann.minIterations());
-            }
-        }
-        return Optional.none();
-    }
-
     public Optional<TimeValue> getMeasurementTime() {
         for (Measurement ann : getAll(Measurement.class)) {
             if (ann.time() != Measurement.BLANK_TIME) {

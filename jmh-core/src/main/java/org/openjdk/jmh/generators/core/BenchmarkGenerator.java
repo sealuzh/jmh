@@ -157,7 +157,6 @@ public class BenchmarkGenerator {
                             group.getWarmupTime(),
                             group.getWarmupBatchSize(),
                             group.getMeasurementIterations(),
-                            group.getMinMeasurementIterations(),
                             group.getMeasurementTime(),
                             group.getMeasurementBatchSize(),
                             group.getForks(),

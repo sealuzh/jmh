@@ -44,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 public @interface Measurement {
 
     int BLANK_ITERATIONS = -1;
-    int BLANK_MIN_ITERATIONS = -1;
     int BLANK_TIME = -1;
     int BLANK_BATCHSIZE = -1;
 
@@ -52,11 +51,6 @@ public @interface Measurement {
      * @return Number of measurement iterations
      */
     int iterations() default BLANK_ITERATIONS;
-
-    /**
-     * @return Minimum number of measurement iterations
-     */
-    int minIterations() default BLANK_ITERATIONS;
 
     /**
      * @return Time of each measurement iteration

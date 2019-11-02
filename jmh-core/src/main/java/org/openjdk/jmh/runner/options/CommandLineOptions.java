@@ -45,7 +45,6 @@ public class CommandLineOptions implements Options {
     private static final long serialVersionUID = 5565183446360224399L;
 
     private final Optional<Integer> iterations;
-    private final Optional<Integer> minIterations;
     private final Optional<TimeValue> timeout;
     private final Optional<TimeValue> runTime;
     private final Optional<Integer> batchSize;
@@ -100,11 +99,6 @@ public class CommandLineOptions implements Options {
                 "Measurement iterations are counted towards the benchmark score. " +
                 "(default: " + Defaults.MEASUREMENT_ITERATIONS_SINGLESHOT + " for " + Mode.SingleShotTime + ", and " +
                 Defaults.MEASUREMENT_ITERATIONS + " for all other modes)")
-                .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.POSITIVE).describedAs("int");
-
-        OptionSpec<Integer> optMinMeasureCount = parser.accepts("mi", "Minimum number of measurement iterations to do. " +
-                "Measurement iterations are counted towards the benchmark score. " +
-                "(default: " + Defaults.MIN_MEASUREMENT_ITERATIONS + ")")
                 .withRequiredArg().withValuesConvertedBy(IntegerValueConverter.POSITIVE).describedAs("int");
 
         OptionSpec<Integer> optMeasureBatchSize = parser.accepts("bs", "Batch size: number of benchmark method " +
@@ -338,7 +332,6 @@ public class CommandLineOptions implements Options {
             listProfilers = set.has("lprof");
 
             iterations = toOptional(optMeasureCount, set);
-            minIterations = toOptional(optMinMeasureCount, set);
             batchSize = toOptional(optMeasureBatchSize, set);
             runTime = toOptional(optMeasureTime, set);
             warmupIterations = toOptional(optWarmupCount, set);
@@ -607,11 +600,6 @@ public class CommandLineOptions implements Options {
     @Override
     public Optional<Integer> getMeasurementIterations() {
         return iterations;
-    }
-
-    @Override
-    public Optional<Integer> getMinMeasurementIterations() {
-        return minIterations;
     }
 
     @Override

@@ -160,13 +160,6 @@ public interface Options extends Serializable {
     Optional<Integer> getMeasurementIterations();
 
     /**
-     * Minimum number of measurement iterations
-     * @return minimum number of measurement iterations
-     * @see org.openjdk.jmh.annotations.Measurement
-     */
-    Optional<Integer> getMinMeasurementIterations();
-
-    /**
      * The duration for measurement iterations
      * @return duration
      * @see org.openjdk.jmh.annotations.Measurement

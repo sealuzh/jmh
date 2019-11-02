@@ -100,9 +100,6 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"warmupTime\" : \"" + params.getWarmup().getTime() + "\",");
             pw.println("\"warmupBatchSize\" : " + params.getWarmup().getBatchSize() + ",");
             pw.println("\"measurementIterations\" : " + params.getMeasurement().getCount() + ",");
-            if (reconfigure){
-                pw.println("\"minMeasurementIterations\" : " + params.getMeasurement().getMinCount() + ",");
-            }
             pw.println("\"measurementTime\" : \"" + params.getMeasurement().getTime() + "\",");
             pw.println("\"measurementBatchSize\" : " + params.getMeasurement().getBatchSize() + ",");
 
@@ -126,22 +123,14 @@ class JSONResultFormat implements ResultFormat {
                 pw.println(",");
 
                 Collection<String> warmupIterationList = new ArrayList<>();
-                Collection<String> measurementIterationList = new ArrayList<>();
                 for (BenchmarkResult benchmarkResult : runResult.getBenchmarkResults()) {
                     Collection<String> warmupIterationThresholds = toListOfStrings(benchmarkResult.getMetadata().getWarmupThresholds());
                     warmupIterationList.add(printMultiple(warmupIterationThresholds, "[", "]"));
-
-                    Collection<String> measurementIterationThresholds = toListOfStrings(benchmarkResult.getMetadata().getMeasurementThresholds());
-                    measurementIterationList.add(printMultiple(measurementIterationThresholds, "[", "]"));
                 }
 
                 pw.println("\"warmupIterations\" : {");
                 pw.println(printMultiple(warmupIterationList, "[", "]"));
                 pw.println("},");
-
-                pw.println("\"measurementIterations\" : {");
-                pw.println(printMultiple(measurementIterationList, "[", "]"));
-                pw.println("}");
 
                 pw.println("},");
 
@@ -261,7 +250,6 @@ class JSONResultFormat implements ResultFormat {
         sb.append("\"measurementForks\" : " + measurementForkJasWarning + ",");
 
         Collection<String> warmupIterationList = new ArrayList<>();
-        Collection<String> measurementIterationList = new ArrayList<>();
         for (BenchmarkResult benchmarkResult : runResult.getBenchmarkResults()) {
             List<Double> warmupThresholds = benchmarkResult.getMetadata().getWarmupThresholds();
             if (warmupThresholds.size() > 0) {
@@ -271,26 +259,13 @@ class JSONResultFormat implements ResultFormat {
                 boolean warmupIterationHasWarning = warmupThresholds.size() == params.getWarmup().getCount() && lastWarmupIterationItem != null && lastWarmupIterationItem > warmupIterationThreshold;
                 warmupIterationList.add(warmupIterationHasWarning ? "true" : "false");
             }
-
-            List<Double> measurementThresholds = benchmarkResult.getMetadata().getMeasurementThresholds();
-            if (measurementThresholds.size() > 0) {
-                Double lastMeasurementIterationItem = measurementThresholds.get(measurementThresholds.size() - 1);
-                // TODO threshold
-                double measurementIterationThreshold = 0.00001;
-                boolean measurementIterationHasWarning = measurementThresholds.size() == params.getMeasurement().getCount() && lastMeasurementIterationItem != null && lastMeasurementIterationItem > measurementIterationThreshold;
-                measurementIterationList.add(measurementIterationHasWarning ? "true" : "false");
-            }
         }
 
         sb.append("\"warmupIterations\" : {");
         sb.append(printMultiple(warmupIterationList, "[", "]"));
         sb.append("},");
 
-        sb.append("\"measurementIterations\" : {");
-        sb.append(printMultiple(measurementIterationList, "[", "]"));
-        sb.append("},");
-
-        boolean totalHasWarning = warmupForkHasWarning || measurementForkJasWarning || warmupIterationList.contains("true") || measurementIterationList.contains("true");
+        boolean totalHasWarning = warmupForkHasWarning || measurementForkJasWarning || warmupIterationList.contains("true");
         sb.append("\"total\" : " + totalHasWarning);
 
         return sb.toString();

@@ -78,7 +78,7 @@ public class Runner extends BaseRunner {
      * Create runner with the custom OutputFormat.
      *
      * @param options options to use
-     * @param format OutputFormat to use
+     * @param format  OutputFormat to use
      */
     public Runner(Options options, OutputFormat format) {
         super(options, format);
@@ -89,6 +89,7 @@ public class Runner extends BaseRunner {
      * Create Runner with the given options.
      * This method sets up the {@link org.openjdk.jmh.runner.format.OutputFormat} as
      * mandated by options.
+     *
      * @param options options to use.
      */
     public Runner(Options options) {
@@ -134,6 +135,7 @@ public class Runner extends BaseRunner {
 
     /**
      * Print matching benchmarks with parameters into output.
+     *
      * @param options
      */
     public void listWithParams(CommandLineOptions options) {
@@ -218,7 +220,7 @@ public class Runner extends BaseRunner {
                 out.println("# WARNING: " + msg + ", ignored by user's request.");
                 return internalRun();
             } else {
-                throw new RunnerException("ERROR: " + msg  + ", exiting. Use -Djmh.ignoreLock=true to forcefully continue.");
+                throw new RunnerException("ERROR: " + msg + ", exiting. Use -Djmh.ignoreLock=true to forcefully continue.");
             }
         } finally {
             try {
@@ -255,9 +257,9 @@ public class Runner extends BaseRunner {
         String resultFile = null;
         if (options.getResult().hasValue() || options.getResultFormat().hasValue()) {
             resultFile = options.getResult().orElse(
-                        Defaults.RESULT_FILE_PREFIX + "." +
-                                options.getResultFormat().orElse(Defaults.RESULT_FORMAT).toString().toLowerCase()
-                    );
+                    Defaults.RESULT_FILE_PREFIX + "." +
+                            options.getResultFormat().orElse(Defaults.RESULT_FORMAT).toString().toLowerCase()
+            );
             try {
                 FileUtils.touch(resultFile);
             } catch (IOException e) {
@@ -327,8 +329,8 @@ public class Runner extends BaseRunner {
         // If user requested the result file, write it out.
         if (resultFile != null) {
             ResultFormatFactory.getInstance(
-                        options.getResultFormat().orElse(Defaults.RESULT_FORMAT),
-                        resultFile
+                    options.getResultFormat().orElse(Defaults.RESULT_FORMAT),
+                    resultFile
             ).writeOut(results);
 
             out.println("");
@@ -427,10 +429,7 @@ public class Runner extends BaseRunner {
                                 benchmark.getMeasurementIterations().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? Defaults.MEASUREMENT_ITERATIONS_SINGLESHOT : Defaults.MEASUREMENT_ITERATIONS
                                 )),
-                        options.getMinMeasurementIterations().orElse(
-                                benchmark.getMinMeasurementIterations().orElse(
-                                        Defaults.MIN_MEASUREMENT_ITERATIONS
-                                )),
+                        0,
                         options.getMeasurementTime().orElse(
                                 benchmark.getMeasurementTime().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? TimeValue.NONE : Defaults.MEASUREMENT_TIME
@@ -585,7 +584,7 @@ public class Runner extends BaseRunner {
                         BenchmarkMetaData bmd = runSeparate(r);
                         res = bmd.getResults();
                         BenchmarkParams params = r.getMeasurementActions().get(0).getParams();
-                        thresholds.put(params,bmd.getThresholdsPair());
+                        thresholds.put(params, bmd.getThresholdsPair());
                         atLeastOneWarning = bmd.hasAtLeastOneWarning();
                         break;
                     default:
@@ -665,13 +664,13 @@ public class Runner extends BaseRunner {
             for (int i = 0; i < totalForks; i++) {
                 boolean warmupFork = (i < warmupForkCount);
                 int forkNr;
-                if(i < warmupForkCount){
+                if (i < warmupForkCount) {
                     forkNr = i + 1;
-                }else{
+                } else {
                     forkNr = i - warmupForkCount + 1;
                 }
 
-                List<String> forkedString  = getForkedMainCommand(params, profilers, server.getHost(), server.getPort());
+                List<String> forkedString = getForkedMainCommand(params, profilers, server.getHost(), server.getPort());
 
                 etaBeforeBenchmark();
 
@@ -712,7 +711,7 @@ public class Runner extends BaseRunner {
                     if (md != null) {
                         md.adjustStart(startTime);
 
-                        if(md.hasAtLeastOneWarning()){
+                        if (md.hasAtLeastOneWarning()) {
                             atLeastOneWarning = true;
                         }
                     }
@@ -743,21 +742,21 @@ public class Runner extends BaseRunner {
                 stdErr.delete();
 
                 frm.addFork(warmupFork, forkNr, result);
-                if(frm.checkForkThreshold(warmupFork)){
-                    if(warmupFork){
+                if (frm.checkForkThreshold(warmupFork)) {
+                    if (warmupFork) {
                         // Set to last warmup fork to skip all not executed warmup forks
                         i = warmupForkCount - 1;
-                    }else{
+                    } else {
                         break;
                     }
                 }
             }
 
-            if(frm.hasAtLeastOneWarning()){
+            if (frm.hasAtLeastOneWarning()) {
                 atLeastOneWarning = true;
             }
 
-            bmd = new BenchmarkMetaData(results, frm.getWarmupThresholds(), frm.getMeasurementThresholds(), atLeastOneWarning );
+            bmd = new BenchmarkMetaData(results, frm.getWarmupThresholds(), frm.getMeasurementThresholds(), atLeastOneWarning);
             out.endBenchmark(new RunResult(params, results.get(params), frm.getWarmupThresholds(), frm.getMeasurementThresholds()).getAggregatedResult());
 
         } catch (IOException e) {
@@ -780,7 +779,7 @@ public class Runner extends BaseRunner {
     }
 
     private List<IterationResult> doFork(BinaryLinkServer reader, List<String> commandString,
-                                                              File stdOut, File stdErr, boolean printOut, boolean printErr) {
+                                         File stdOut, File stdErr, boolean printOut, boolean printErr) {
         try (FileOutputStream fosErr = new FileOutputStream(stdErr);
              FileOutputStream fosOut = new FileOutputStream(stdOut)) {
             ProcessBuilder pb = new ProcessBuilder(commandString);

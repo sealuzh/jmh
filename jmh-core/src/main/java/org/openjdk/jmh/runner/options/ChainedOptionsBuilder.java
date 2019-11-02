@@ -232,15 +232,6 @@ public interface ChainedOptionsBuilder {
     ChainedOptionsBuilder measurementIterations(int count);
 
     /**
-     * How many measurement measurementIterations to do at least
-     * @param count minimum number of iterations
-     * @return builder
-     * @see org.openjdk.jmh.annotations.Measurement
-     * @see org.openjdk.jmh.runner.Defaults#MIN_MEASUREMENT_ITERATIONS
-     */
-    ChainedOptionsBuilder minMeasurementIterations(int count);
-
-    /**
      * How large measurement batchSize should be?
      * @param value batch size
      * @return builder

@@ -472,26 +472,6 @@ public class OptionsBuilder implements Options, ChainedOptionsBuilder {
 
     // ---------------------------------------------------------------------------
 
-    private Optional<Integer> minIterations = Optional.none();
-
-    @Override
-    public ChainedOptionsBuilder minMeasurementIterations(int count) {
-        checkGreaterOrEqual(count, 1, "Minimum measurement iterations");
-        this.minIterations = Optional.of(count);
-        return this;
-    }
-
-    @Override
-    public Optional<Integer> getMinMeasurementIterations() {
-        if (otherOptions != null) {
-            return minIterations.orAnother(otherOptions.getMinMeasurementIterations());
-        } else {
-            return minIterations;
-        }
-    }
-
-    // ---------------------------------------------------------------------------
-
     private Optional<TimeValue> measurementTime = Optional.none();
 
     @Override

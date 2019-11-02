@@ -13,7 +13,7 @@ public class JMHSample_00_Reconfigure {
 
     @Benchmark
     @Warmup(minIterations = 11, time = 1, timeUnit = TimeUnit.MICROSECONDS)
-    @Measurement(minIterations = 12, time = 1, timeUnit = TimeUnit.MICROSECONDS)
+    @Measurement(time = 1, timeUnit = TimeUnit.MICROSECONDS)
     @BenchmarkMode(Mode.AverageTime)
     @Fork(minWarmups = 7, minValue = 9)
     public void wellHelloThere() {

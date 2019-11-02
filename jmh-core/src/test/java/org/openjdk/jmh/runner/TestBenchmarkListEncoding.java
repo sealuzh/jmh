@@ -55,7 +55,6 @@ public class TestBenchmarkListEncoding {
                 Optional.<TimeValue>none(),
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),
-                Optional.<Integer>none(),
                 Optional.<TimeValue>none(),
                 Optional.<Integer>none(),
                 Optional.<Integer>none(),

@@ -15,6 +15,8 @@ public class ForkReconfigureManager extends ReconfigureManager {
     private int currentWarmupFork = 0;
     private int currentMeasurementFork = 0;
 
+    private List<Double> measurementThresholds = new ArrayList<>();
+
     public ForkReconfigureManager(BenchmarkParams benchParams, OutputFormat out) {
         super(benchParams, out);
     }
@@ -97,5 +99,9 @@ public class ForkReconfigureManager extends ReconfigureManager {
 
             return result;
         }
+    }
+
+    public List<Double> getMeasurementThresholds() {
+        return measurementThresholds;
     }
 }

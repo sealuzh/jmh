@@ -49,7 +49,6 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     private final Optional<TimeValue> warmupTime;
     private final Optional<Integer> warmupBatchSize;
     private final Optional<Integer> measurementIterations;
-    private final Optional<Integer> minMeasurementIterations;
     private final Optional<TimeValue> measurementTime;
     private final Optional<Integer> measurementBatchSize;
     private final Optional<Integer> forks;
@@ -70,7 +69,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
     public BenchmarkListEntry(String userClassQName, String generatedClassQName, String method, Mode mode,
                               Optional<Integer> threads, int[] threadGroups, Optional<Collection<String>> threadGroupLabels,
                               Optional<Integer> warmupIterations, Optional<Integer> minWarmupIterations, Optional<TimeValue> warmupTime, Optional<Integer> warmupBatchSize,
-                              Optional<Integer> measurementIterations, Optional<Integer> minMeasurementIterations, Optional<TimeValue> measurementTime, Optional<Integer> measurementBatchSize,
+                              Optional<Integer> measurementIterations, Optional<TimeValue> measurementTime, Optional<Integer> measurementBatchSize,
                               Optional<Integer> forks, Optional<Integer> minForks, Optional<Integer> warmupForks, Optional<Integer> minWarmupForks,
                               Optional<String> jvm, Optional<Collection<String>> jvmArgs, Optional<Collection<String>> jvmArgsPrepend, Optional<Collection<String>> jvmArgsAppend,
                               Optional<Map<String, String[]>> params, Optional<TimeUnit> tu, Optional<Integer> opsPerInv,
@@ -87,7 +86,6 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         this.warmupTime = warmupTime;
         this.warmupBatchSize = warmupBatchSize;
         this.measurementIterations = measurementIterations;
-        this.minMeasurementIterations = minMeasurementIterations;
         this.measurementTime = measurementTime;
         this.measurementBatchSize = measurementBatchSize;
         this.forks = forks;
@@ -126,7 +124,6 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         this.warmupTime                 = reader.nextOptionalTimeValue();
         this.warmupBatchSize            = reader.nextOptionalInt();
         this.measurementIterations      = reader.nextOptionalInt();
-        this.minMeasurementIterations   = reader.nextOptionalInt();
         this.measurementTime            = reader.nextOptionalTimeValue();
         this.measurementBatchSize       = reader.nextOptionalInt();
         this.forks                      = reader.nextOptionalInt();
@@ -158,7 +155,6 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         writer.putOptionalTimeValue(warmupTime);
         writer.putOptionalInt(warmupBatchSize);
         writer.putOptionalInt(measurementIterations);
-        writer.putOptionalInt(minMeasurementIterations);
         writer.putOptionalTimeValue(measurementTime);
         writer.putOptionalInt(measurementBatchSize);
         writer.putOptionalInt(forks);
@@ -181,7 +177,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         return new BenchmarkListEntry(userClassQName, generatedClassQName, method, mode,
                 threads, threadGroups, threadGroupLabels,
                 minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
-                minMeasurementIterations, measurementIterations, measurementTime, measurementBatchSize,
+                measurementIterations, measurementTime, measurementBatchSize,
                 forks, minForks, warmupForks, minWarmupForks,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
@@ -192,7 +188,7 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
         BenchmarkListEntry br = new BenchmarkListEntry(userClassQName, generatedClassQName, method, mode,
                 threads, threadGroups, threadGroupLabels,
                 minWarmupIterations, warmupIterations, warmupTime, warmupBatchSize,
-                minMeasurementIterations, measurementIterations, measurementTime, measurementBatchSize,
+                measurementIterations, measurementTime, measurementBatchSize,
                 forks, minForks, warmupForks, minWarmupForks,
                 jvm, jvmArgs, jvmArgsPrepend, jvmArgsAppend,
                 params, tu, opsPerInvocation,
@@ -299,10 +295,6 @@ public class BenchmarkListEntry implements Comparable<BenchmarkListEntry> {
 
     public Optional<Integer> getMeasurementIterations() {
         return measurementIterations;
-    }
-
-    public Optional<Integer> getMinMeasurementIterations() {
-        return minMeasurementIterations;
     }
 
     public Optional<Integer> getMeasurementBatchSize() {

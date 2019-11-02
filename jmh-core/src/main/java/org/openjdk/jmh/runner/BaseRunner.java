@@ -291,11 +291,6 @@ abstract class BaseRunner {
 
             allMeasurement += ir.getMetadata().getAllOps();
 
-            irm.addMeasurementIteration(i, ir);
-            if(irm.checkMeasurementIterationThreshold()){
-                break;
-            }
-
             if (acceptor != null) {
                 acceptor.accept(ir);
             }
@@ -305,7 +300,7 @@ abstract class BaseRunner {
 
         BenchmarkResultMetaData md = new BenchmarkResultMetaData(
                 warmupTime, measurementTime, stopTime,
-                allWarmup, allMeasurement, irm.getWarmupThresholds(), irm.getMeasurementThresholds(), irm.hasAtLeastOneWarning());
+                allWarmup, allMeasurement, irm.getWarmupThresholds(), irm.hasAtLeastOneWarning());
 
         if (acceptor != null) {
             acceptor.acceptMeta(md);

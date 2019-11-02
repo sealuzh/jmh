@@ -14,7 +14,6 @@ public abstract class ReconfigureManager {
     protected Map<Integer, List<HistogramItem>> measurementHistogram = new HashMap<>();
 
     protected List<Double> warmupThresholds = new ArrayList<>();
-    protected List<Double> measurementThresholds = new ArrayList<>();
 
     private boolean atLeastOneWarning = false;
 
@@ -50,10 +49,6 @@ public abstract class ReconfigureManager {
 
     public List<Double> getWarmupThresholds() {
         return warmupThresholds;
-    }
-
-    public List<Double> getMeasurementThresholds() {
-        return measurementThresholds;
     }
 
     public boolean hasAtLeastOneWarning() {
