@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JMHSample_00_Reconfigure" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="org.openjdk.jmh.samples.JMHSample_00_Reconfigure" />
+    <module name="jmh-samples" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.openjdk.jmh.samples.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/jmh-core/pom.xml" goal="install -DskipTests" />
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
