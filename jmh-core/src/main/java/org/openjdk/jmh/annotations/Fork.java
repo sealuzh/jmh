@@ -40,7 +40,6 @@ import java.lang.annotation.*;
 public @interface Fork {
 
     int BLANK_FORKS = -1;
-    int BLANK_MIN_FORKS = -1;
 
     String BLANK_ARGS = "blank_blank_blank_2014";
 

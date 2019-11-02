@@ -174,7 +174,7 @@ class MethodGroup implements Comparable<MethodGroup> {
 
     public Optional<Integer> getMinWarmupIterations() {
         for (Warmup ann : getAll(Warmup.class)) {
-            if (ann.minIterations() != Warmup.BLANK_MIN_ITERATIONS) {
+            if (ann.minIterations() != Warmup.BLANK_ITERATIONS) {
                 return Optional.of(ann.minIterations());
             }
         }
@@ -237,7 +237,7 @@ class MethodGroup implements Comparable<MethodGroup> {
 
     public Optional<Integer> getMinForks() {
         for (Fork ann : getAll(Fork.class)) {
-            if (ann.minValue() != Fork.BLANK_MIN_FORKS) {
+            if (ann.minValue() != Fork.BLANK_FORKS) {
                 return Optional.of(ann.minValue());
             }
         }
@@ -255,7 +255,7 @@ class MethodGroup implements Comparable<MethodGroup> {
 
     public Optional<Integer> getMinWarmupForks() {
         for (Fork ann : getAll(Fork.class)) {
-            if (ann.minWarmups() != Fork.BLANK_MIN_FORKS) {
+            if (ann.minWarmups() != Fork.BLANK_FORKS) {
                 return Optional.of(ann.minWarmups());
             }
         }

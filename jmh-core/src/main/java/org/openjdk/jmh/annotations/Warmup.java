@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 public @interface Warmup {
 
     int BLANK_ITERATIONS = -1;
-    int BLANK_MIN_ITERATIONS = -1;
     int BLANK_TIME = -1;
     int BLANK_BATCHSIZE = -1;
 
