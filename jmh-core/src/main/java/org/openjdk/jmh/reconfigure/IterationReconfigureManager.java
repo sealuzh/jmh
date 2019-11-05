@@ -2,7 +2,6 @@ package org.openjdk.jmh.reconfigure;
 
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.reconfigure.helper.HistogramHelper;
-import org.openjdk.jmh.reconfigure.statistics.EvaluationType;
 import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluation;
 import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluationFactory;
 import org.openjdk.jmh.results.IterationResult;
@@ -30,7 +29,7 @@ public class IterationReconfigureManager extends ReconfigureManager {
             int maxIterations = benchParams.getWarmup().getCount();
 
             List<HistogramItem> warmupList = HistogramHelper.toList(warmupHistogram);
-            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, warmupList, EvaluationType.WARMUP_ITERATION);
+            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, warmupList);
             double value = se.getValue();
             warmupThresholds.add(value);
             boolean result = value < se.getThreshold();
