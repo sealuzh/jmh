@@ -228,24 +228,21 @@ class JSONResultFormat implements ResultFormat {
 
     private String getThresholdWarnings(RunResult runResult) {
         BenchmarkParams params = runResult.getParams();
+        double threshold = params.getReconfigureThreshold();
 
         StringBuilder sb = new StringBuilder();
 
         boolean warmupForkHasWarning = false;
         if (runResult.getWarmupThresholds().size() > 0) {
             Double lastWarmupForkItem = runResult.getWarmupThresholds().get(runResult.getWarmupThresholds().size() - 1);
-            // TODO threshold
-            double warmupForkThreshold = 0.05;
-            warmupForkHasWarning = runResult.getWarmupThresholds().size() == params.getMinWarmupForks() && lastWarmupForkItem != null && lastWarmupForkItem > warmupForkThreshold;
+            warmupForkHasWarning = runResult.getWarmupThresholds().size() == params.getMinWarmupForks() && lastWarmupForkItem != null && lastWarmupForkItem > threshold;
         }
         sb.append("\"warmupForks\" : " + warmupForkHasWarning + ",");
 
         boolean measurementForkJasWarning = false;
         if (runResult.getMeasurementThresholds().size() > 0) {
             Double lastMeasurementForkItem = runResult.getMeasurementThresholds().get(runResult.getMeasurementThresholds().size() - 1);
-            // TODO threshold
-            double measurementForkThreshold = 0.05;
-            measurementForkJasWarning = runResult.getMeasurementThresholds().size() == params.getMinForks() && lastMeasurementForkItem != null && lastMeasurementForkItem > measurementForkThreshold;
+            measurementForkJasWarning = runResult.getMeasurementThresholds().size() == params.getMinForks() && lastMeasurementForkItem != null && lastMeasurementForkItem > threshold;
         }
         sb.append("\"measurementForks\" : " + measurementForkJasWarning + ",");
 
@@ -254,9 +251,7 @@ class JSONResultFormat implements ResultFormat {
             List<Double> warmupThresholds = benchmarkResult.getMetadata().getWarmupThresholds();
             if (warmupThresholds.size() > 0) {
                 Double lastWarmupIterationItem = warmupThresholds.get(warmupThresholds.size() - 1);
-                // TODO threshold
-                double warmupIterationThreshold = 0.05;
-                boolean warmupIterationHasWarning = warmupThresholds.size() == params.getWarmup().getCount() && lastWarmupIterationItem != null && lastWarmupIterationItem > warmupIterationThreshold;
+                boolean warmupIterationHasWarning = warmupThresholds.size() == params.getWarmup().getCount() && lastWarmupIterationItem != null && lastWarmupIterationItem > threshold;
                 warmupIterationList.add(warmupIterationHasWarning ? "true" : "false");
             }
         }

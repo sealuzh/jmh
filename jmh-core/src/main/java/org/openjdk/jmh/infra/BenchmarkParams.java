@@ -365,6 +365,19 @@ abstract class BenchmarkParamsL2 extends BenchmarkParamsL1 implements Serializab
         return reconfigureKldThreshold;
     }
 
+    public double getReconfigureThreshold() {
+        switch (getReconfigureMode()) {
+            case CI:
+                return getReconfigureCiThreshold();
+            case COV:
+                return getReconfigureCovThreshold();
+            case DIVERGENCE:
+                return getReconfigureKldThreshold();
+            default:
+                throw new IllegalArgumentException("Reconfigure Mode is nod valid");
+        }
+    }
+
     /**
      * @return benchmark name
      */

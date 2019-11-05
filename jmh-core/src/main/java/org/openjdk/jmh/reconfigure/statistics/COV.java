@@ -8,6 +8,8 @@ import org.openjdk.jmh.reconfigure.helper.OutlierDetector;
 
 import java.util.List;
 
+import static org.openjdk.jmh.reconfigure.ReconfigureConstants.OUTLIER_FACTOR;
+
 class COV implements StatisticalEvaluation {
     private List<Double> list;
     private double threshold;
@@ -19,8 +21,7 @@ class COV implements StatisticalEvaluation {
 
     @Override
     public double getValue() {
-        // TODO outlierFactor
-        OutlierDetector od = new OutlierDetector(10.0, list);
+        OutlierDetector od = new OutlierDetector(OUTLIER_FACTOR, list);
         od.run();
         return calculate(od.getInlier());
     }
