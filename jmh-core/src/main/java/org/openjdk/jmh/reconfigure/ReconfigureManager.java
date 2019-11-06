@@ -11,7 +11,6 @@ public abstract class ReconfigureManager {
     private final OutputFormat out;
 
     protected Map<Integer, List<HistogramItem>> warmupHistogram = new HashMap<>();
-    protected Map<Integer, List<HistogramItem>> measurementHistogram = new HashMap<>();
 
     protected List<Double> warmupThresholds = new ArrayList<>();
 

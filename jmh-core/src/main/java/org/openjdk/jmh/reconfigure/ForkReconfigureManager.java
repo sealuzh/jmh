@@ -8,11 +8,15 @@ import org.openjdk.jmh.results.IterationResult;
 import org.openjdk.jmh.runner.format.OutputFormat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ForkReconfigureManager extends ReconfigureManager {
     private int currentWarmupFork = 0;
     private int currentMeasurementFork = 0;
+
+    private Map<Integer, List<HistogramItem>> measurementHistogram = new HashMap<>();
 
     private List<Double> measurementThresholds = new ArrayList<>();
 
