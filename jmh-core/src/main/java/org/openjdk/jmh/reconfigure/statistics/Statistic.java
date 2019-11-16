@@ -1,7 +1,5 @@
 package org.openjdk.jmh.reconfigure.statistics;
 
-public interface StatisticalEvaluation {
+public interface Statistic {
     double getValue();
-
-    double getThreshold();
 }

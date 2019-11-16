@@ -1,39 +1,27 @@
 package org.openjdk.jmh.reconfigure.statistics;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.openjdk.jmh.reconfigure.HistogramItem;
 import org.openjdk.jmh.reconfigure.helper.HistogramHelper;
+import org.openjdk.jmh.reconfigure.helper.HistogramItem;
 import org.openjdk.jmh.reconfigure.helper.ListToArray;
-import org.openjdk.jmh.reconfigure.helper.OutlierDetector;
 
 import java.util.List;
 
-import static org.openjdk.jmh.reconfigure.ReconfigureConstants.OUTLIER_FACTOR;
-
-class COV implements StatisticalEvaluation {
+public class COV implements Statistic {
     private List<Double> list;
-    private double threshold;
 
-    public COV(List<HistogramItem> list, double threshold) {
+    public COV(List<HistogramItem> list) {
         this.list = HistogramHelper.toArray(list);
-        this.threshold = threshold;
     }
 
     @Override
     public double getValue() {
-        OutlierDetector od = new OutlierDetector(OUTLIER_FACTOR, list);
-        od.run();
-        return calculate(od.getInlier());
-    }
-
-    double calculate(List<Double> input) {
-        double[] array = ListToArray.toPrimitive(input);
+        double[] array = ListToArray.toPrimitive(list);
         DescriptiveStatistics ds = new DescriptiveStatistics(array);
-        return ds.getStandardDeviation() / ds.getMean();
-    }
-
-    @Override
-    public double getThreshold() {
-        return threshold;
+        if (ds.getMean() == 0) {
+            return 0;
+        } else {
+            return ds.getStandardDeviation() / ds.getMean();
+        }
     }
 }

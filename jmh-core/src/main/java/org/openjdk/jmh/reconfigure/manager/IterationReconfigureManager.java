@@ -16,7 +16,6 @@ public class IterationReconfigureManager extends ReconfigureManager {
 
     public boolean checkWarmupIterationThreshold() {
         int currentWarmupIteration = warmupEvaluation.getIterationNumber();
-        System.out.println(benchParams.getWarmup().getMinCount());
         if (currentWarmupIteration < benchParams.getWarmup().getMinCount()) {
             warmupThresholds.add(null);
             return false;

@@ -48,12 +48,12 @@ public class CIHelper {
     }
 
     private void copyExecutableToTmpFolderFile(URL resource) {
-//        try {
-//            File executable = new File(resource.getFile());
-//            FileUtils.copyFile(executable, tempFile);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            File executable = new File(resource.getFile());
+            FileUtils.copyFile(executable, tempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void copyExecutableToTmpFolderJar(URL resource) {
