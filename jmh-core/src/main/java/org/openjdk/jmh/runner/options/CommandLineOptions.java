@@ -204,7 +204,7 @@ public class CommandLineOptions implements Options {
 
         OptionSpec<Double> optReconfigureCovThreshold = parser.accepts("rcov", "coefficient of variation variability threshold " +
                 "(default: " + Defaults.RECONFIGURE_COV_THRESHOLD + ")")
-                .withRequiredArg().withValuesConvertedBy(DoubleValueConverter.PROBABILITY).describedAs("double");
+                .withRequiredArg().withValuesConvertedBy(DoubleValueConverter.NON_NEGATIVE).describedAs("double");
 
         OptionSpec<Double> optReconfigureCiThreshold = parser.accepts("rci", "confidence interval variability threshold " +
                 "(default: " + Defaults.RECONFIGURE_CI_THRESHOLD + ")")

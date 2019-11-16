@@ -41,12 +41,12 @@ public class Defaults {
     /**
      * Number of warmup iterations.
      */
-    public static final int WARMUP_ITERATIONS = 5;
+    public static final int WARMUP_ITERATIONS = 50;
 
     /**
      * Minimum number of warmup iterations.
      */
-    public static final int MIN_WARMUP_ITERATIONS = 2;
+    public static final int MIN_WARMUP_ITERATIONS = 5;
 
     /**
      * Number of warmup iterations in {@link org.openjdk.jmh.annotations.Mode#SingleShotTime} mode.
@@ -61,17 +61,12 @@ public class Defaults {
     /**
      * The duration of warmup iterations.
      */
-    public static final TimeValue WARMUP_TIME = TimeValue.seconds(10);
+    public static final TimeValue WARMUP_TIME = TimeValue.seconds(1);
 
     /**
      * Number of measurement iterations.
      */
-    public static final int MEASUREMENT_ITERATIONS = 5;
-
-    /**
-     * Minimum number of measurement iterations.
-     */
-    public static final int MIN_MEASUREMENT_ITERATIONS = 2;
+    public static final int MEASUREMENT_ITERATIONS = 50;
 
     /**
      * Number of measurement iterations in {@link org.openjdk.jmh.annotations.Mode#SingleShotTime} mode.
@@ -86,7 +81,7 @@ public class Defaults {
     /**
      * The duration of measurement iterations.
      */
-    public static final TimeValue MEASUREMENT_TIME = TimeValue.seconds(10);
+    public static final TimeValue MEASUREMENT_TIME = TimeValue.seconds(1);
 
     /**
      * Number of measurement threads.

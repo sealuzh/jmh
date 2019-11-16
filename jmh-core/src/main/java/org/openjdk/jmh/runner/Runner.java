@@ -33,8 +33,8 @@ import org.openjdk.jmh.infra.IterationParams;
 import org.openjdk.jmh.profile.ExternalProfiler;
 import org.openjdk.jmh.profile.ProfilerException;
 import org.openjdk.jmh.profile.ProfilerFactory;
-import org.openjdk.jmh.reconfigure.manager.ForkReconfigureManager;
 import org.openjdk.jmh.reconfigure.helper.BenchmarkMetaData;
+import org.openjdk.jmh.reconfigure.manager.ForkReconfigureManager;
 import org.openjdk.jmh.results.*;
 import org.openjdk.jmh.results.format.ResultFormatFactory;
 import org.openjdk.jmh.runner.format.OutputFormat;
@@ -443,6 +443,15 @@ public class Runner extends BaseRunner {
                 ) :
                 new IterationParams(IterationType.MEASUREMENT, 0, 0, TimeValue.NONE, 1);
 
+        int minWarmupIteration = options.getMinWarmupIterations().orElse(
+                benchmark.getMinWarmupIterations().orElse(
+                        Defaults.MIN_WARMUP_ITERATIONS
+                ));
+
+        if (minWarmupIteration < Defaults.MIN_WARMUP_ITERATIONS) {
+            minWarmupIteration = Defaults.MIN_WARMUP_ITERATIONS;
+        }
+
         IterationParams warmup = mode.doWarmup() ?
                 new IterationParams(
                         IterationType.WARMUP,
@@ -450,10 +459,7 @@ public class Runner extends BaseRunner {
                                 benchmark.getWarmupIterations().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? Defaults.WARMUP_ITERATIONS_SINGLESHOT : Defaults.WARMUP_ITERATIONS
                                 )),
-                        options.getMinWarmupIterations().orElse(
-                                benchmark.getMinWarmupIterations().orElse(
-                                        Defaults.MIN_WARMUP_ITERATIONS
-                                )),
+                        minWarmupIteration,
                         options.getWarmupTime().orElse(
                                 benchmark.getWarmupTime().orElse(
                                         (benchmark.getMode() == Mode.SingleShotTime) ? TimeValue.NONE : Defaults.WARMUP_TIME
@@ -483,13 +489,13 @@ public class Runner extends BaseRunner {
                         Defaults.MIN_WARMUP_FORKS));
 
         ReconfigureMode reconfigureMode;
-        if(!options.getReconfigureMode().hasValue() || options.getReconfigureMode().get().isNone()){
-            if(benchmark.getReconfigureMode().isNone()){
+        if (!options.getReconfigureMode().hasValue() || options.getReconfigureMode().get().isNone()) {
+            if (benchmark.getReconfigureMode().isNone()) {
                 reconfigureMode = Defaults.RECONFIGURE_MODE;
-            }else{
+            } else {
                 reconfigureMode = benchmark.getReconfigureMode();
             }
-        }else{
+        } else {
             reconfigureMode = options.getReconfigureMode().get();
         }
 
@@ -757,6 +763,16 @@ public class Runner extends BaseRunner {
                     if (!warmupFork) {
                         results.put(params, br);
                     }
+
+                    frm.addFork(warmupFork, forkNr, result);
+                    if (frm.checkForkThreshold(warmupFork)) {
+                        if (warmupFork) {
+                            // Set to last warmup fork to skip all not executed warmup forks
+                            i = warmupForkCount - 1;
+                        } else {
+                            break;
+                        }
+                    }
                 }
 
                 etaAfterBenchmark(params);
@@ -765,16 +781,6 @@ public class Runner extends BaseRunner {
                 // we know these are not needed anymore, proactively delete
                 stdOut.delete();
                 stdErr.delete();
-
-                frm.addFork(warmupFork, forkNr, result);
-                if (frm.checkForkThreshold(warmupFork)) {
-                    if (warmupFork) {
-                        // Set to last warmup fork to skip all not executed warmup forks
-                        i = warmupForkCount - 1;
-                    } else {
-                        break;
-                    }
-                }
             }
 
             if (frm.hasAtLeastOneWarning()) {
