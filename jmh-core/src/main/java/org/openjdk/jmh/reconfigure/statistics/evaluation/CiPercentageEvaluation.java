@@ -88,4 +88,9 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
     public int getIterationNumber() {
         return sampleInIteration.size();
     }
+
+    @Override
+    public boolean stableEnvironment(double value) {
+        return value < threshold;
+    }
 }

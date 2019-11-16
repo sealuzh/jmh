@@ -73,4 +73,9 @@ public class CovEvaluation implements StatisticalEvaluation {
     public int getIterationNumber() {
         return samplePerIteration.size();
     }
+
+    @Override
+    public boolean stableEnvironment(double value) {
+        return value < threshold;
+    }
 }

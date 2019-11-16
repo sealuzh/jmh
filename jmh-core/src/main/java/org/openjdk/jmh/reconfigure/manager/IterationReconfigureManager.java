@@ -23,7 +23,7 @@ public class IterationReconfigureManager extends ReconfigureManager {
             int maxIterations = benchParams.getWarmup().getCount();
             double value = warmupEvaluation.calculateVariability();
             warmupThresholds.add(value);
-            boolean result = value < warmupEvaluation.getThreshold();
+            boolean result = warmupEvaluation.stableEnvironment(value);
 
             if (currentWarmupIteration == maxIterations && !result) {
                 printWarning("warmup iterations", warmupEvaluation.getThreshold(), value);

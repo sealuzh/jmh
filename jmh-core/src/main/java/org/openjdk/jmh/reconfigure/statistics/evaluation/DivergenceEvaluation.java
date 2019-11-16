@@ -92,4 +92,9 @@ public class DivergenceEvaluation implements StatisticalEvaluation {
     public int getIterationNumber() {
         return sampleUntilIteration.size();
     }
+
+    @Override
+    public boolean stableEnvironment(double value) {
+        return value > threshold;
+    }
 }

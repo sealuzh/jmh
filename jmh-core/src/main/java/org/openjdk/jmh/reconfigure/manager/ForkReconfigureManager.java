@@ -58,7 +58,7 @@ public class ForkReconfigureManager extends ReconfigureManager {
             int maxForks = benchParams.getWarmupForks();
             double value = warmupEvaluation.calculateVariability();
             warmupThresholds.add(value);
-            boolean result = value < warmupEvaluation.getThreshold();
+            boolean result = warmupEvaluation.stableEnvironment(value);
 
             if (currentWarmupFork == maxForks && !result) {
                 printWarning("warmup forks", warmupEvaluation.getThreshold(), value);
@@ -79,7 +79,7 @@ public class ForkReconfigureManager extends ReconfigureManager {
             int maxForks = benchParams.getForks();
             double value = measurementEvaluation.calculateVariability();
             measurementThresholds.add(value);
-            boolean result = value < measurementEvaluation.getThreshold();
+            boolean result = measurementEvaluation.stableEnvironment(value);
 
             if (currentMeasurementFork == maxForks && !result) {
                 printWarning("measurement forks", measurementEvaluation.getThreshold(), value);

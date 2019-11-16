@@ -77,11 +77,11 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"mode\" : \"" + params.getMode().shortLabel() + "\",");
             pw.println("\"threads\" : " + params.getThreads() + ",");
             pw.println("\"forks\" : " + params.getForks() + ",");
-            if (isReconfigureMode){
+            if (isReconfigureMode) {
                 pw.println("\"minForks\" : " + params.getMinForks() + ",");
             }
             pw.println("\"warmupForks\" : " + params.getWarmupForks() + ",");
-            if (isReconfigureMode){
+            if (isReconfigureMode) {
                 pw.println("\"minWarmupForks\" : " + params.getMinWarmupForks() + ",");
             }
             pw.println("\"jvm\" : " + toJsonString(params.getJvm()) + ",");
@@ -93,7 +93,7 @@ class JSONResultFormat implements ResultFormat {
             pw.println("\"vmName\" : " + toJsonString(params.getVmName()) + ",");
             pw.println("\"vmVersion\" : " + toJsonString(params.getVmVersion()) + ",");
             pw.println("\"warmupIterations\" : " + params.getWarmup().getCount() + ",");
-            if (isReconfigureMode){
+            if (isReconfigureMode) {
                 pw.println("\"minWarmupIterations\" : " + params.getWarmup().getMinCount() + ",");
             }
             pw.println("\"warmupTime\" : \"" + params.getWarmup().getTime() + "\",");
@@ -109,6 +109,9 @@ class JSONResultFormat implements ResultFormat {
             }
 
             if (isReconfigureMode) {
+                pw.println("\"reconfigureMode\" : " + toJsonString(params.getReconfigureMode().shortLabel()) + ",");
+                pw.println("\"reconfigureThreshold\" : " + params.getReconfigureThreshold() + ",");
+
                 pw.println("\"thresholds\" : {");
 
                 pw.println("\"warmupForks\" : ");
@@ -341,20 +344,43 @@ class JSONResultFormat implements ResultFormat {
             }
             switch (c) {
                 // use & as escape character to escape the tidying
-                case '&': sb.append("&&"); break;
+                case '&':
+                    sb.append("&&");
+                    break;
                 // we cannot escape to \\\\ since this would create sequences interpreted by the tidying
-                case '\\': sb.append("&/"); break;
-                case '"': sb.append("&'"); break;
+                case '\\':
+                    sb.append("&/");
+                    break;
+                case '"':
+                    sb.append("&'");
+                    break;
                 // escape spacial chars for the tidying formatting below that might appear in a string
-                case ',': sb.append(";"); break;
-                case '[': sb.append("<"); break;
-                case ']': sb.append(">"); break;
-                case '<': sb.append("&-"); break;
-                case '>': sb.append("&="); break;
-                case ';': sb.append("&:"); break;
-                case '{': sb.append("&("); break;
-                case '}': sb.append("&)"); break;
-                default: sb.append(c);
+                case ',':
+                    sb.append(";");
+                    break;
+                case '[':
+                    sb.append("<");
+                    break;
+                case ']':
+                    sb.append(">");
+                    break;
+                case '<':
+                    sb.append("&-");
+                    break;
+                case '>':
+                    sb.append("&=");
+                    break;
+                case ';':
+                    sb.append("&:");
+                    break;
+                case '{':
+                    sb.append("&(");
+                    break;
+                case '}':
+                    sb.append("&)");
+                    break;
+                default:
+                    sb.append(c);
             }
         }
         sb.append("\"");
@@ -440,7 +466,7 @@ class JSONResultFormat implements ResultFormat {
         }
     }
 
-    private static List<String> toListOfStrings(List<Double> doubles){
+    private static List<String> toListOfStrings(List<Double> doubles) {
         List<String> strings = new ArrayList<>();
         for (Double threshold : doubles) {
             if (threshold == null) {

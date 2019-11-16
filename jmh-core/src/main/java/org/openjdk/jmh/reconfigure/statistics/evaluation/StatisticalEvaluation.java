@@ -12,4 +12,6 @@ public interface StatisticalEvaluation {
     Double calculateVariability();
 
     int getIterationNumber();
+
+    boolean stableEnvironment(double value);
 }

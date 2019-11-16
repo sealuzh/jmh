@@ -47,7 +47,8 @@ public abstract class ReconfigureManager {
 
     protected void printInfo(int currentNumber, int maxNumber, String type, double value, double threshold) {
         out.println("");
-        out.println(String.format("# Data collection is stopped after %d of %d %s because value of %.4f is less than threshold %.4f", currentNumber, maxNumber, type, value, threshold));
+        String lessOrGreaterThan = (value < threshold) ? "is less" : "is greater";
+        out.println(String.format("# Data collection is stopped after %d of %d %s because value of %.4f " + lessOrGreaterThan + " than threshold %.4f", currentNumber, maxNumber, type, value, threshold));
         out.println("");
     }
 

@@ -707,10 +707,19 @@ public class Runner extends BaseRunner {
 
                 if (warmupFork) {
                     out.verbosePrintln("Warmup forking using command: " + forkedString);
-                    out.println("# Warmup Fork: " + (i + 1) + " of " + warmupForkCount);
+
+                    if(params.getMode().equals(Mode.Reconfigure)){
+                        out.println("# Warmup Fork: " + (i + 1) + " of " + warmupForkCount + " (min=" + params.getMinForks() + ")");
+                    }else{
+                        out.println("# Warmup Fork: " + (i + 1) + " of " + warmupForkCount);
+                    }
                 } else {
                     out.verbosePrintln("Forking using command: " + forkedString);
-                    out.println("# Fork: " + (i + 1 - warmupForkCount) + " of " + forkCount);
+                    if(params.getMode().equals(Mode.Reconfigure)){
+                        out.println("# Fork: " + (i + 1 - warmupForkCount) + " of " + forkCount + " (min=" + params.getMinForks() + ")");
+                    }else{
+                        out.println("# Fork: " + (i + 1 - warmupForkCount) + " of " + forkCount);
+                    }
                 }
 
                 TempFile stdErr = FileUtils.weakTempFile("stderr");
