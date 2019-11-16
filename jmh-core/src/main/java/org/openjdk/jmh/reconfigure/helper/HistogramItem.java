@@ -1,4 +1,4 @@
-package org.openjdk.jmh.reconfigure;
+package org.openjdk.jmh.reconfigure.helper;
 
 public class HistogramItem {
     private final int fork;
@@ -27,5 +27,19 @@ public class HistogramItem {
 
     public long getCount() {
         return count;
+    }
+
+    public HistogramItem single() {
+        return new HistogramItem(fork, iteration, value, 1);
+    }
+
+    @Override
+    public String toString() {
+        return "HistogramItem{" +
+                "fork=" + fork +
+                ", iteration=" + iteration +
+                ", value=" + value +
+                ", count=" + count +
+                '}';
     }
 }

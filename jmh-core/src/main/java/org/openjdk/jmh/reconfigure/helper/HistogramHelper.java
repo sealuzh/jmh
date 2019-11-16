@@ -1,7 +1,5 @@
 package org.openjdk.jmh.reconfigure.helper;
 
-import org.openjdk.jmh.reconfigure.HistogramItem;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

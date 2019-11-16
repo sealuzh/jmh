@@ -27,7 +27,7 @@ package org.openjdk.jmh.runner;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.infra.IterationParams;
-import org.openjdk.jmh.reconfigure.IterationReconfigureManager;
+import org.openjdk.jmh.reconfigure.manager.IterationReconfigureManager;
 import org.openjdk.jmh.results.BenchmarkResult;
 import org.openjdk.jmh.results.BenchmarkResultMetaData;
 import org.openjdk.jmh.results.IterationResult;

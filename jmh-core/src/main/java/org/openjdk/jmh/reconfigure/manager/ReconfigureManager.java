@@ -1,16 +1,21 @@
-package org.openjdk.jmh.reconfigure;
+package org.openjdk.jmh.reconfigure.manager;
 
 import org.openjdk.jmh.infra.BenchmarkParams;
+import org.openjdk.jmh.reconfigure.helper.HistogramItem;
+import org.openjdk.jmh.reconfigure.statistics.evaluation.StatisticalEvaluation;
 import org.openjdk.jmh.results.IterationResult;
 import org.openjdk.jmh.runner.format.OutputFormat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public abstract class ReconfigureManager {
     protected final BenchmarkParams benchParams;
     private final OutputFormat out;
 
-    protected Map<Integer, List<HistogramItem>> warmupHistogram = new HashMap<>();
+    protected StatisticalEvaluation warmupEvaluation;
 
     protected List<Double> warmupThresholds = new ArrayList<>();
 

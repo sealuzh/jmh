@@ -7,7 +7,8 @@ import java.util.List;
 
 public class OutlierDetector {
     private double outlierFactor;
-    private double[] input;
+    private List<HistogramItem> input;
+    private double[] inputRaw;
 
     private double q1;
     private double q3;
@@ -15,16 +16,17 @@ public class OutlierDetector {
     private double min;
     private double max;
 
-    private List<Double> outlier = new ArrayList<>();
-    private List<Double> inlier = new ArrayList<>();
+    private List<HistogramItem> outlier = new ArrayList<>();
+    private List<HistogramItem> inlier = new ArrayList<>();
 
-    public OutlierDetector(double outlierFactor, List<Double> input) {
+    public OutlierDetector(double outlierFactor, List<HistogramItem> input) {
         this.outlierFactor = outlierFactor;
-        this.input = ListToArray.toPrimitive(input);
+        this.input = input;
+        this.inputRaw = ListToArray.toPrimitive(HistogramHelper.toArray(input));
     }
 
     public void run() {
-        DescriptiveStatistics ds = new DescriptiveStatistics(input);
+        DescriptiveStatistics ds = new DescriptiveStatistics(inputRaw);
         q1 = ds.getPercentile(25.0);
         q3 = ds.getPercentile(75.0);
         iqr = q3 - q1;
@@ -32,13 +34,13 @@ public class OutlierDetector {
         max = q3 + outlierFactor * iqr;
         min = q1 - outlierFactor * iqr;
 
-        for (int i = 0; i < input.length; i++) {
-            double value = input[i];
+        for (int i = 0; i < input.size(); i++) {
+            double value = input.get(i).getValue();
 
             if (value <= max && value >= min) {
-                inlier.add(value);
+                inlier.add(input.get(i));
             } else {
-                outlier.add(value);
+                outlier.add(input.get(i));
             }
         }
     }
@@ -63,11 +65,11 @@ public class OutlierDetector {
         return max;
     }
 
-    public List<Double> getOutlier() {
+    public List<HistogramItem> getOutlier() {
         return outlier;
     }
 
-    public List<Double> getInlier() {
+    public List<HistogramItem> getInlier() {
         return inlier;
     }
 }

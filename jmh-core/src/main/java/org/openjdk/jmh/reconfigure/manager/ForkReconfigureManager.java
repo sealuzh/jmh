@@ -1,27 +1,23 @@
-package org.openjdk.jmh.reconfigure;
+package org.openjdk.jmh.reconfigure.manager;
 
 import org.openjdk.jmh.infra.BenchmarkParams;
-import org.openjdk.jmh.reconfigure.helper.HistogramHelper;
-import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluation;
-import org.openjdk.jmh.reconfigure.statistics.StatisticalEvaluationFactory;
+import org.openjdk.jmh.reconfigure.helper.HistogramItem;
+import org.openjdk.jmh.reconfigure.statistics.evaluation.StatisticalEvaluation;
 import org.openjdk.jmh.results.IterationResult;
 import org.openjdk.jmh.runner.format.OutputFormat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ForkReconfigureManager extends ReconfigureManager {
-    private int currentWarmupFork = 0;
-    private int currentMeasurementFork = 0;
-
-    private Map<Integer, List<HistogramItem>> measurementHistogram = new HashMap<>();
+    private StatisticalEvaluation measurementEvaluation;
 
     private List<Double> measurementThresholds = new ArrayList<>();
 
     public ForkReconfigureManager(BenchmarkParams benchParams, OutputFormat out) {
         super(benchParams, out);
+        warmupEvaluation = StatisticalEvaluationFactory.get(benchParams);
+        measurementEvaluation = StatisticalEvaluationFactory.get(benchParams);
     }
 
     public void addFork(boolean isWarmup, int fork, List<IterationResult> list) {
@@ -31,22 +27,19 @@ public class ForkReconfigureManager extends ReconfigureManager {
         }
 
         if (isWarmup) {
-            addWarmupFork(fork, combined);
+            addWarmupFork(combined);
         } else {
-            addMeasurementFork(fork, combined);
+            addMeasurementFork(combined);
         }
     }
 
-    private void addWarmupFork(int fork, List<HistogramItem> list) {
-        currentWarmupFork = fork;
-        warmupHistogram.put(fork, list);
+    private void addWarmupFork(List<HistogramItem> list) {
+        warmupEvaluation.addIteration(list);
     }
 
-    private void addMeasurementFork(int fork, List<HistogramItem> list) {
-        currentMeasurementFork = fork;
-        measurementHistogram.put(fork, list);
+    private void addMeasurementFork(List<HistogramItem> list) {
+        measurementEvaluation.addIteration(list);
     }
-
 
     public boolean checkForkThreshold(boolean isWarmup) {
         if (isWarmup) {
@@ -57,23 +50,20 @@ public class ForkReconfigureManager extends ReconfigureManager {
     }
 
     private boolean checkWarmupForkThreshold() {
+        int currentWarmupFork = warmupEvaluation.getIterationNumber();
         if (currentWarmupFork < benchParams.getMinWarmupForks()) {
             warmupThresholds.add(null);
             return false;
         } else {
             int maxForks = benchParams.getWarmupForks();
-
-            List<HistogramItem> warmupList = HistogramHelper.toList(warmupHistogram);
-            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, warmupList);
-            double value = se.getValue();
+            double value = warmupEvaluation.calculateVariability();
             warmupThresholds.add(value);
-
-            boolean result = value < se.getThreshold();
+            boolean result = value < warmupEvaluation.getThreshold();
 
             if (currentWarmupFork == maxForks && !result) {
-                printWarning("warmup forks", se.getThreshold(), value);
+                printWarning("warmup forks", warmupEvaluation.getThreshold(), value);
             } else if (currentWarmupFork < maxForks && result) {
-                printInfo(currentWarmupFork, maxForks, "warmup forks", value, se.getThreshold());
+                printInfo(currentWarmupFork, maxForks, "warmup forks", value, warmupEvaluation.getThreshold());
             }
 
             return result;
@@ -81,23 +71,20 @@ public class ForkReconfigureManager extends ReconfigureManager {
     }
 
     private boolean checkMeasurementForkThreshold() {
+        int currentMeasurementFork = measurementEvaluation.getIterationNumber();
         if (currentMeasurementFork < benchParams.getMinForks()) {
             measurementThresholds.add(null);
             return false;
         } else {
             int maxForks = benchParams.getForks();
-
-            List<HistogramItem> measurementList = HistogramHelper.toList(measurementHistogram);
-            StatisticalEvaluation se = StatisticalEvaluationFactory.get(benchParams, measurementList);
-            double value = se.getValue();
+            double value = measurementEvaluation.calculateVariability();
             measurementThresholds.add(value);
-
-            boolean result = value < se.getThreshold();
+            boolean result = value < measurementEvaluation.getThreshold();
 
             if (currentMeasurementFork == maxForks && !result) {
-                printWarning("measurement forks", se.getThreshold(), value);
+                printWarning("measurement forks", measurementEvaluation.getThreshold(), value);
             } else if (currentMeasurementFork < maxForks && result) {
-                printInfo(currentMeasurementFork, maxForks, "measurement forks", value, se.getThreshold());
+                printInfo(currentMeasurementFork, maxForks, "measurement forks", value, measurementEvaluation.getThreshold());
             }
 
             return result;

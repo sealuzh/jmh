@@ -33,7 +33,7 @@ import org.openjdk.jmh.infra.IterationParams;
 import org.openjdk.jmh.profile.ExternalProfiler;
 import org.openjdk.jmh.profile.ProfilerException;
 import org.openjdk.jmh.profile.ProfilerFactory;
-import org.openjdk.jmh.reconfigure.ForkReconfigureManager;
+import org.openjdk.jmh.reconfigure.manager.ForkReconfigureManager;
 import org.openjdk.jmh.reconfigure.helper.BenchmarkMetaData;
 import org.openjdk.jmh.results.*;
 import org.openjdk.jmh.results.format.ResultFormatFactory;
