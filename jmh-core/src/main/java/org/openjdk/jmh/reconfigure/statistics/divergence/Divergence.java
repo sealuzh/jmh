@@ -26,6 +26,10 @@ public class Divergence implements Statistic {
         double min = range.getLeft();
         double max = range.getRight();
 
+        if(min == max){
+            return 1.0;
+        }
+
         List<Double> y = new ArrayList<>();
         double step = (max - min) / (DIVERGENCE_NUMBER_OF_POINTS - 1);
         for (int i = 0; i < DIVERGENCE_NUMBER_OF_POINTS; i++) {

@@ -49,6 +49,11 @@ public class Defaults {
     public static final int MIN_WARMUP_ITERATIONS = 5;
 
     /**
+     * Minimum number of warmup iterations for divergence mode.
+     */
+    public static final int MIN_WARMUP_ITERATIONS_DIVERGENCE = 6;
+
+    /**
      * Number of warmup iterations in {@link org.openjdk.jmh.annotations.Mode#SingleShotTime} mode.
      */
     public static final int WARMUP_ITERATIONS_SINGLESHOT = 0;

@@ -443,13 +443,25 @@ public class Runner extends BaseRunner {
                 ) :
                 new IterationParams(IterationType.MEASUREMENT, 0, 0, TimeValue.NONE, 1);
 
+        ReconfigureMode reconfigureMode;
+        if (!options.getReconfigureMode().hasValue() || options.getReconfigureMode().get().isNone()) {
+            if (benchmark.getReconfigureMode().isNone()) {
+                reconfigureMode = Defaults.RECONFIGURE_MODE;
+            } else {
+                reconfigureMode = benchmark.getReconfigureMode();
+            }
+        } else {
+            reconfigureMode = options.getReconfigureMode().get();
+        }
+
+        int defaultWarmupIterations = reconfigureMode.equals(ReconfigureMode.DIVERGENCE) ? Defaults.MIN_WARMUP_ITERATIONS_DIVERGENCE : Defaults.MIN_WARMUP_ITERATIONS;
         int minWarmupIteration = options.getMinWarmupIterations().orElse(
                 benchmark.getMinWarmupIterations().orElse(
-                        Defaults.MIN_WARMUP_ITERATIONS
+                        defaultWarmupIterations
                 ));
 
-        if (minWarmupIteration < Defaults.MIN_WARMUP_ITERATIONS) {
-            minWarmupIteration = Defaults.MIN_WARMUP_ITERATIONS;
+        if (minWarmupIteration < defaultWarmupIterations) {
+            minWarmupIteration = defaultWarmupIterations;
         }
 
         IterationParams warmup = mode.doWarmup() ?
@@ -487,17 +499,6 @@ public class Runner extends BaseRunner {
         int minWarmupForks = options.getMinWarmupForkCount().orElse(
                 benchmark.getMinWarmupForks().orElse(
                         Defaults.MIN_WARMUP_FORKS));
-
-        ReconfigureMode reconfigureMode;
-        if (!options.getReconfigureMode().hasValue() || options.getReconfigureMode().get().isNone()) {
-            if (benchmark.getReconfigureMode().isNone()) {
-                reconfigureMode = Defaults.RECONFIGURE_MODE;
-            } else {
-                reconfigureMode = benchmark.getReconfigureMode();
-            }
-        } else {
-            reconfigureMode = options.getReconfigureMode().get();
-        }
 
         double reconfigureCovThreshold = options.getReconfigureCovThreshold().orElse(
                 benchmark.getReconfigureCovThreshold().orElse(
@@ -708,16 +709,16 @@ public class Runner extends BaseRunner {
                 if (warmupFork) {
                     out.verbosePrintln("Warmup forking using command: " + forkedString);
 
-                    if(params.getMode().equals(Mode.Reconfigure)){
+                    if (params.getMode().equals(Mode.Reconfigure)) {
                         out.println("# Warmup Fork: " + (i + 1) + " of " + warmupForkCount + " (min=" + params.getMinForks() + ")");
-                    }else{
+                    } else {
                         out.println("# Warmup Fork: " + (i + 1) + " of " + warmupForkCount);
                     }
                 } else {
                     out.verbosePrintln("Forking using command: " + forkedString);
-                    if(params.getMode().equals(Mode.Reconfigure)){
+                    if (params.getMode().equals(Mode.Reconfigure)) {
                         out.println("# Fork: " + (i + 1 - warmupForkCount) + " of " + forkCount + " (min=" + params.getMinForks() + ")");
-                    }else{
+                    } else {
                         out.println("# Fork: " + (i + 1 - warmupForkCount) + " of " + forkCount);
                     }
                 }
