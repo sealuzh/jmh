@@ -774,13 +774,15 @@ public class Runner extends BaseRunner {
                         results.put(params, br);
                     }
 
-                    frm.addFork(warmupFork, forkNr, result);
-                    if (frm.checkForkThreshold(warmupFork)) {
-                        if (warmupFork) {
-                            // Set to last warmup fork to skip all not executed warmup forks
-                            i = warmupForkCount - 1;
-                        } else {
-                            break;
+                    if (params.getMode().equals(Mode.Reconfigure)) {
+                        frm.addFork(warmupFork, forkNr, result);
+                        if (frm.checkForkThreshold(warmupFork)) {
+                            if (warmupFork) {
+                                // Set to last warmup fork to skip all not executed warmup forks
+                                i = warmupForkCount - 1;
+                            } else {
+                                break;
+                            }
                         }
                     }
                 }

@@ -266,9 +266,11 @@ abstract class BaseRunner {
 
             allWarmup += ir.getMetadata().getAllOps();
 
-            irm.addWarmupIteration(i, ir);
-            if (irm.checkWarmupIterationThreshold()) {
-                break;
+            if (benchParams.getMode().equals(Mode.Reconfigure)) {
+                irm.addWarmupIteration(i, ir);
+                if (irm.checkWarmupIterationThreshold()) {
+                    break;
+                }
             }
         }
 
