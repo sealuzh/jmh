@@ -10,22 +10,24 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 public class CI {
-    private List<HistogramItem> histogramList;
+    protected List<HistogramItem> histogramList;
 
-    private String paToolPath;
-    private final int bootstrapSimulations;
-    private final double significanceLevel;
-    private final String statistic;
+    protected String paToolPath;
+    protected final int bootstrapSimulations;
+    protected final double significanceLevel;
+    protected final String statistic;
+    protected final int ciInvocationSamples;
 
-    private double lower;
-    private double upper;
-    private double statisticMetric;
+    protected double lower;
+    protected double upper;
+    protected double statisticMetric;
 
-    public CI(List<HistogramItem> histogramList, int bootstrapSimulations, double significanceLevel, String statistic) {
+    public CI(List<HistogramItem> histogramList, int bootstrapSimulations, double significanceLevel, String statistic, int ciInvocationSamples) {
         this.histogramList = histogramList;
         this.bootstrapSimulations = bootstrapSimulations;
         this.significanceLevel = significanceLevel;
         this.statistic = statistic;
+        this.ciInvocationSamples = ciInvocationSamples;
         executable();
     }
 
@@ -34,9 +36,9 @@ public class CI {
     }
 
     public void run() {
-        String file = getTmpFile();
+        String file = getTmpFile(histogramList);
         try {
-            Process process = Runtime.getRuntime().exec(paToolPath + " -om -bs " + bootstrapSimulations + " -is -1 -sig " + significanceLevel + " -st " + statistic + " " + file);
+            Process process = Runtime.getRuntime().exec(paToolPath + " -om -bs " + bootstrapSimulations + " -is " + ciInvocationSamples + " -sig " + significanceLevel + " -st " + statistic + " " + file);
             String inputString = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
             String errorString = IOUtils.toString(process.getErrorStream(), Charset.defaultCharset());
             String output = (inputString + "\n" + errorString).trim();
@@ -50,7 +52,7 @@ public class CI {
         }
     }
 
-    private String getFirstLine(String input) {
+    protected String getFirstLine(String input) {
         String[] lines = input.split("\n");
 
         for (int i = 0; i < lines.length; i++) {
@@ -64,13 +66,13 @@ public class CI {
         return null;
     }
 
-    private String getTmpFile() {
+    protected String getTmpFile(List<HistogramItem> list) {
         try {
             File tmpFile = File.createTempFile("reconfigure", ".csv");
             FileWriter fw = new FileWriter(tmpFile);
 
-            for (int i = 0; i < histogramList.size(); i++) {
-                HistogramItem hi = histogramList.get(i);
+            for (int i = 0; i < list.size(); i++) {
+                HistogramItem hi = list.get(i);
                 fw.append(";;;;;0;" + hi.getFork() + ";" + hi.getIteration() + ";;;" + hi.getCount() + ";" + hi.getValue() + "\n");
             }
 

@@ -7,7 +7,7 @@ import org.openjdk.jmh.runner.format.OutputFormat;
 public class IterationReconfigureManager extends ReconfigureManager {
     public IterationReconfigureManager(BenchmarkParams benchParams, OutputFormat out) {
         super(benchParams, out);
-        warmupEvaluation = StatisticalEvaluationFactory.get(benchParams);
+        warmupEvaluation = StatisticalIterationEvaluationFactory.get(benchParams);
     }
 
     public void addWarmupIteration(int iteration, IterationResult ir) {

@@ -26,7 +26,7 @@ public class Divergence implements Statistic {
         double min = range.getLeft();
         double max = range.getRight();
 
-        if(min == max){
+        if (min == max) {
             return 1.0;
         }
 

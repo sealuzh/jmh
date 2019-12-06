@@ -1,20 +1,34 @@
 package org.openjdk.jmh.reconfigure.statistics.evaluation;
 
 import org.openjdk.jmh.reconfigure.helper.HistogramItem;
+import org.openjdk.jmh.reconfigure.helper.OutlierDetector;
 import org.openjdk.jmh.reconfigure.statistics.Sampler;
 import org.openjdk.jmh.reconfigure.statistics.ci.CiPercentage;
 
 import java.util.*;
 
+import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.CI_SAMPLE_SIZE;
+import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.OUTLIER_FACTOR;
+
 public class CiPercentageEvaluation implements StatisticalEvaluation {
     private double threshold;
+    private double historySize;
 
     private List<HistogramItem> allMeasurements = new ArrayList<>();
     private Map<Integer, List<HistogramItem>> sampleInIteration = new HashMap<>();
     private Map<Integer, Double> ciPercentagePerIteration = new HashMap<>();
 
-    public CiPercentageEvaluation(double threshold) {
+    private CiPercentageEvaluation(double threshold, int historySize) {
         this.threshold = threshold;
+        this.historySize = historySize;
+    }
+
+    public static CiPercentageEvaluation getIterationInstance(double threshold){
+        return new CiPercentageEvaluation(threshold, 5);
+    }
+
+    public static CiPercentageEvaluation getForkInstance(double threshold){
+        return new CiPercentageEvaluation(threshold, 2);
     }
 
     @Override
@@ -22,32 +36,10 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
         int iteration = sampleInIteration.size() + 1;
         allMeasurements.addAll(list);
 
-        // TODO SIZE
-        List<HistogramItem> sample = new Sampler(allMeasurements).getSample(10000);
-
-        Collections.sort(sample, new Comparator<HistogramItem>() {
-
-            @Override
-            public int compare(final HistogramItem item1, final HistogramItem item2) {
-                int diffFork = item1.getFork() - item2.getFork();
-                if (diffFork > 0) {
-                    return 1;
-                } else if (diffFork < 0) {
-                    return -1;
-                } else {
-                    int diffIteration = item1.getIteration() - item2.getIteration();
-                    if (diffIteration > 0) {
-                        return 1;
-                    } else if (diffIteration < 0) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-
-        });
-        sampleInIteration.put(iteration, sample);
+        List<HistogramItem> sample = new Sampler(allMeasurements).getSample(CI_SAMPLE_SIZE);
+        OutlierDetector od = new OutlierDetector(OUTLIER_FACTOR, sample);
+        od.run();
+        sampleInIteration.put(iteration, od.getInlier());
     }
 
     @Override
@@ -57,14 +49,14 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
 
     @Override
     public Double calculateVariability() {
-        if (sampleInIteration.size() < 5) {
+        if (sampleInIteration.size() < historySize) {
             return null;
         } else {
             List<Double> deltas = new ArrayList<>();
             int currentIteration = sampleInIteration.size();
             double currentCiPercentage = getCiPercentageOfIteration(currentIteration);
 
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 1; i <= historySize - 1; i++) {
                 double ciPercentage = getCiPercentageOfIteration(currentIteration - i);
                 double delta = Math.abs(ciPercentage - currentCiPercentage);
                 deltas.add(delta);
@@ -90,7 +82,7 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
     }
 
     @Override
-    public boolean stableEnvironment(double value) {
-        return value < threshold;
+    public boolean stableEnvironment(Double value) {
+        return value != null && value < threshold;
     }
 }

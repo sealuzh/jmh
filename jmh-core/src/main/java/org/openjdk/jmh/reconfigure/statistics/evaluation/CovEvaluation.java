@@ -12,12 +12,22 @@ import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.SAMPLE
 
 public class CovEvaluation implements StatisticalEvaluation {
     private double threshold;
+    private double historySize;
 
     private Map<Integer, List<HistogramItem>> samplePerIteration = new HashMap<>();
     private Map<Integer, Double> covPerIteration = new HashMap<>();
 
-    public CovEvaluation(double threshold) {
+    private CovEvaluation(double threshold, int historySize) {
         this.threshold = threshold;
+        this.historySize = historySize;
+    }
+
+    public static CovEvaluation getIterationInstance(double threshold){
+        return new CovEvaluation(threshold, 5);
+    }
+
+    public static CovEvaluation getForkInstance(double threshold){
+        return new CovEvaluation(threshold, 2);
     }
 
     @Override
@@ -37,14 +47,14 @@ public class CovEvaluation implements StatisticalEvaluation {
 
     @Override
     public Double calculateVariability() {
-        if (samplePerIteration.size() < 5) {
+        if (samplePerIteration.size() < historySize) {
             return null;
         } else {
             List<Double> deltas = new ArrayList<>();
             int currentIteration = samplePerIteration.size();
             double currentCov = getCovOfIteration(currentIteration);
 
-            for (int i = 1; i <= 4; i++) {
+            for (int i = 1; i <= historySize - 1; i++) {
                 double cov = getCovOfIteration(currentIteration - i);
                 double delta = Math.abs(cov - currentCov);
                 deltas.add(delta);
@@ -75,7 +85,7 @@ public class CovEvaluation implements StatisticalEvaluation {
     }
 
     @Override
-    public boolean stableEnvironment(double value) {
-        return value < threshold;
+    public boolean stableEnvironment(Double value) {
+        return value != null && value < threshold;
     }
 }

@@ -16,8 +16,8 @@ public class ForkReconfigureManager extends ReconfigureManager {
 
     public ForkReconfigureManager(BenchmarkParams benchParams, OutputFormat out) {
         super(benchParams, out);
-        warmupEvaluation = StatisticalEvaluationFactory.get(benchParams);
-        measurementEvaluation = StatisticalEvaluationFactory.get(benchParams);
+        warmupEvaluation = StatisticalForkEvaluationFactory.get(benchParams);
+        measurementEvaluation = StatisticalForkEvaluationFactory.get(benchParams);
     }
 
     public void addFork(boolean isWarmup, int fork, List<IterationResult> list) {
@@ -77,7 +77,7 @@ public class ForkReconfigureManager extends ReconfigureManager {
             return false;
         } else {
             int maxForks = benchParams.getForks();
-            double value = measurementEvaluation.calculateVariability();
+            Double value = measurementEvaluation.calculateVariability();
             measurementThresholds.add(value);
             boolean result = measurementEvaluation.stableEnvironment(value);
 

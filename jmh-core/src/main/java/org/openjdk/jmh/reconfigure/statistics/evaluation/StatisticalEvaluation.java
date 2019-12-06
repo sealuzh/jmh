@@ -13,5 +13,5 @@ public interface StatisticalEvaluation {
 
     int getIterationNumber();
 
-    boolean stableEnvironment(double value);
+    boolean stableEnvironment(Double value);
 }

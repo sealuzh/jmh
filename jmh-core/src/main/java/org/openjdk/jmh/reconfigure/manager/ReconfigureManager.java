@@ -36,7 +36,7 @@ public abstract class ReconfigureManager {
         return list;
     }
 
-    protected void printWarning(String type, double threshold, double value) {
+    protected void printWarning(String type, double threshold, Double value) {
         out.println("");
         out.println("##########");
         out.println(String.format("# WARNING: Maximum number of %s was reached but statistical variability threshold of %.4f is not achieved with current value of %.4f", type, threshold, value));
@@ -45,7 +45,7 @@ public abstract class ReconfigureManager {
         atLeastOneWarning = true;
     }
 
-    protected void printInfo(int currentNumber, int maxNumber, String type, double value, double threshold) {
+    protected void printInfo(int currentNumber, int maxNumber, String type, Double value, double threshold) {
         out.println("");
         String lessOrGreaterThan = (value < threshold) ? "is less" : "is greater";
         out.println(String.format("# Data collection is stopped after %d of %d %s because value of %.4f " + lessOrGreaterThan + " than threshold %.4f", currentNumber, maxNumber, type, value, threshold));

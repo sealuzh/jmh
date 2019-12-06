@@ -1,7 +1,5 @@
 package org.openjdk.jmh.reconfigure.statistics.evaluation;
 
-import org.apache.commons.math3.distribution.EnumeratedDistribution;
-import org.apache.commons.math3.util.Pair;
 import org.openjdk.jmh.reconfigure.helper.HistogramHelper;
 import org.openjdk.jmh.reconfigure.helper.HistogramItem;
 import org.openjdk.jmh.reconfigure.statistics.divergence.Divergence;
@@ -9,20 +7,29 @@ import org.openjdk.jmh.reconfigure.statistics.divergence.Divergence;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.SAMPLE_SIZE;
 
 public class DivergenceEvaluation implements StatisticalEvaluation {
     private double threshold;
+    private double historySize;
 
     private List<Double> allMeasurements = new ArrayList<>();
     private Map<Integer, List<Double>> sampleUntilIteration = new HashMap<>();
     private Map<Integer, Double> pValuePerIteration = new HashMap<>();
 
-    public DivergenceEvaluation(double threshold) {
+    private DivergenceEvaluation(double threshold, int historySize) {
         this.threshold = threshold;
+        this.historySize = historySize;
         disableSystemErr();
+    }
+
+    public static DivergenceEvaluation getIterationInstance(double threshold){
+        return new DivergenceEvaluation(threshold, 6);
+    }
+
+    public static DivergenceEvaluation getForkInstance(double threshold){
+        return new DivergenceEvaluation(threshold, 2);
     }
 
     @Override
@@ -42,13 +49,13 @@ public class DivergenceEvaluation implements StatisticalEvaluation {
 
     @Override
     public Double calculateVariability() {
-        if (sampleUntilIteration.size() < 6) {
+        if (sampleUntilIteration.size() < historySize) {
             return null;
         } else {
             List<Double> pvalues = new ArrayList<>();
             int currentIteration = sampleUntilIteration.size();
 
-            for (int i = 0; i <= 4; i++) {
+            for (int i = 0; i <= historySize - 2; i++) {
                 Double pvalue = getPValueOfIteration(currentIteration - i);
                 pvalues.add(pvalue);
             }
@@ -74,9 +81,14 @@ public class DivergenceEvaluation implements StatisticalEvaluation {
     }
 
     private List<Double> getSample(List<Double> list) {
-        ArrayList<Pair<Double, Double>> distributionPairs = list.stream().map(it -> new Pair<Double, Double>(it, 1.0)).collect(Collectors.toCollection(ArrayList<Pair<Double, Double>>::new));
-        EnumeratedDistribution ed = new EnumeratedDistribution<Double>(distributionPairs);
-        List<Double> sample = new ArrayList<Double>((List<Double>) (List<?>) Arrays.asList(ed.sample(SAMPLE_SIZE)));
+        Random random = new Random();
+        List<Double> sample = new ArrayList<>();
+
+        for (int i = 0; i < SAMPLE_SIZE; i++) {
+            Double d = list.get(random.nextInt(list.size()));
+            sample.add(d);
+        }
+
         Collections.sort(sample);
         return sample;
     }
@@ -94,7 +106,7 @@ public class DivergenceEvaluation implements StatisticalEvaluation {
     }
 
     @Override
-    public boolean stableEnvironment(double value) {
-        return value > threshold;
+    public boolean stableEnvironment(Double value) {
+        return value != null && value > threshold;
     }
 }
