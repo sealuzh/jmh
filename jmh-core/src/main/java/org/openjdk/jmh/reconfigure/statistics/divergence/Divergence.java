@@ -1,6 +1,6 @@
 package org.openjdk.jmh.reconfigure.statistics.divergence;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.openjdk.jmh.reconfigure.helper.ListToArray;
 import org.openjdk.jmh.reconfigure.statistics.Statistic;
@@ -23,8 +23,8 @@ public class Divergence implements Statistic {
     @Override
     public double getValue() {
         Pair<Double, Double> range = getRange();
-        double min = range.getLeft();
-        double max = range.getRight();
+        double min = range.getFirst();
+        double max = range.getSecond();
 
         if (min == max) {
             return 1.0;
@@ -49,10 +49,10 @@ public class Divergence implements Statistic {
         Pair<Double, Double> rangeBefore = getRangeDistribution(before);
         Pair<Double, Double> rangeAfter = getRangeDistribution(after);
 
-        double min = Math.min(rangeBefore.getLeft(), rangeAfter.getLeft());
-        double max = Math.max(rangeBefore.getRight(), rangeAfter.getRight());
+        double min = Math.min(rangeBefore.getFirst(), rangeAfter.getFirst());
+        double max = Math.max(rangeBefore.getSecond(), rangeAfter.getSecond());
 
-        return Pair.of(min, max);
+        return new Pair<Double, Double>(min, max);
     }
 
     private Pair<Double, Double> getRangeDistribution(List<Double> list) {
@@ -67,6 +67,6 @@ public class Divergence implements Statistic {
         if (min < 0) {
             min = 0.0;
         }
-        return Pair.of(min, max);
+        return new Pair<Double, Double>(min, max);
     }
 }
