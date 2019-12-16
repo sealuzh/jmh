@@ -22,11 +22,11 @@ public class CovEvaluation implements StatisticalEvaluation {
         this.historySize = historySize;
     }
 
-    public static CovEvaluation getIterationInstance(double threshold){
+    public static CovEvaluation getIterationInstance(double threshold) {
         return new CovEvaluation(threshold, 5);
     }
 
-    public static CovEvaluation getForkInstance(double threshold){
+    public static CovEvaluation getForkInstance(double threshold) {
         return new CovEvaluation(threshold, 2);
     }
 

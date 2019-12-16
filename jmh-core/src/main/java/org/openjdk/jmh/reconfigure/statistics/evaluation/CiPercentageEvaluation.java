@@ -23,11 +23,11 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
         this.historySize = historySize;
     }
 
-    public static CiPercentageEvaluation getIterationInstance(double threshold){
+    public static CiPercentageEvaluation getIterationInstance(double threshold) {
         return new CiPercentageEvaluation(threshold, 5);
     }
 
-    public static CiPercentageEvaluation getForkInstance(double threshold){
+    public static CiPercentageEvaluation getForkInstance(double threshold) {
         return new CiPercentageEvaluation(threshold, 2);
     }
 
