@@ -7,8 +7,7 @@ import org.openjdk.jmh.reconfigure.statistics.ci.CiPercentage;
 
 import java.util.*;
 
-import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.CI_SAMPLE_SIZE;
-import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.OUTLIER_FACTOR;
+import static org.openjdk.jmh.reconfigure.statistics.ReconfigureConstants.*;
 
 public class CiPercentageEvaluation implements StatisticalEvaluation {
     private double threshold;
@@ -33,13 +32,15 @@ public class CiPercentageEvaluation implements StatisticalEvaluation {
 
     @Override
     public void addIteration(List<HistogramItem> list) {
-        int iteration = sampleInIteration.size() + 1;
-        allMeasurements.addAll(list);
-
-        List<HistogramItem> sample = new Sampler(allMeasurements).getSample(CI_SAMPLE_SIZE);
-        OutlierDetector od = new OutlierDetector(OUTLIER_FACTOR, sample);
+        OutlierDetector od = new OutlierDetector(OUTLIER_FACTOR, list);
         od.run();
-        sampleInIteration.put(iteration, od.getInlier());
+        List<HistogramItem> sample = new Sampler(od.getInlier()).getSample(SAMPLE_SIZE);
+
+        int iteration = sampleInIteration.size() + 1;
+        allMeasurements.addAll(sample);
+
+        List<HistogramItem> sampleUntil = new Sampler(allMeasurements).getSample(SAMPLE_SIZE);
+        sampleInIteration.put(iteration, sampleUntil);
     }
 
     @Override
