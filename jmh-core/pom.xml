@@ -151,6 +151,18 @@ questions.
             <resource>
                 <directory>src/main/resources/</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>pa</exclude>
+                    <exclude>pa.exe</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>pa</include>
+                    <include>pa.exe</include>
+                </includes>
             </resource>
         </resources>
     </build>
