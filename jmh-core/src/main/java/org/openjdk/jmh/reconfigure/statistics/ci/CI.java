@@ -49,6 +49,8 @@ public class CI {
             upper = Double.parseDouble(parts[5]);
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            new File(file).delete();
         }
     }
 

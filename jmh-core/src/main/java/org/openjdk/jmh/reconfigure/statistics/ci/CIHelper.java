@@ -42,9 +42,10 @@ public class CIHelper {
                 copyExecutableToTmpFolderJar(resource);
             } else {
                 copyExecutableToTmpFolderFile(resource);
-
             }
         }
+
+        tempFile.setExecutable(true, true);
     }
 
     private void copyExecutableToTmpFolderFile(URL resource) {
