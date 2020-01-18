@@ -176,7 +176,7 @@ public class Defaults {
     /**
      * Default reconfigure mode.
      */
-    public static final ReconfigureMode RECONFIGURE_MODE = ReconfigureMode.COV;
+    public static final ReconfigureMode RECONFIGURE_MODE = ReconfigureMode.DIVERGENCE;
 
     /**
      * coefficient of variation variability threshold.
