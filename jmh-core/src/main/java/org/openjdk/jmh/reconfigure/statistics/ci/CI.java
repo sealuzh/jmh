@@ -38,7 +38,7 @@ public class CI {
     public void run() {
         String file = getTmpFile(histogramList);
         try {
-            Process process = Runtime.getRuntime().exec(paToolPath + " -om -bs " + bootstrapSimulations + " -is " + ciInvocationSamples + " -sig " + significanceLevel + " -st " + statistic + " " + file);
+            Process process = Runtime.getRuntime().exec(paToolPath + " -os -bs " + bootstrapSimulations + " -is " + ciInvocationSamples + " -sl " + significanceLevel + " -st " + statistic + " " + file);
             String inputString = IOUtils.toString(process.getInputStream(), Charset.defaultCharset());
             String errorString = IOUtils.toString(process.getErrorStream(), Charset.defaultCharset());
             String output = (inputString + "\n" + errorString).trim();
