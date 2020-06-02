@@ -70,7 +70,19 @@ public class CIHelper {
         return SystemUtils.IS_OS_WINDOWS;
     }
 
+    private boolean isMacOS() {
+        return SystemUtils.IS_OS_MAC_OSX;
+    }
+
     private String executableName() {
-        return isWindows() ? "pa.exe" : "pa";
+        String e;
+        if (isWindows()) {
+            e = "pa_windows_amd64.exe";
+        } else if (isMacOS()) {
+            e = "pa_darwin_amd64";
+        } else {
+            e = "pa_linux_amd64";
+        }
+        return e;
     }
 }

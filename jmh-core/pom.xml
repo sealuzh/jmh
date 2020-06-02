@@ -152,16 +152,18 @@ questions.
                 <directory>src/main/resources/</directory>
                 <filtering>true</filtering>
                 <excludes>
-                    <exclude>pa</exclude>
-                    <exclude>pa.exe</exclude>
+                    <exclude>pa_linux_amd64</exclude>
+                    <exclude>pa_darwin_amd64</exclude>
+                    <exclude>pa_windows_amd64.exe</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources/</directory>
                 <filtering>false</filtering>
                 <includes>
-                    <include>pa</include>
-                    <include>pa.exe</include>
+                    <include>pa_linux_amd64</include>
+                    <include>pa_darwin_amd64</include>
+                    <include>pa_windows_amd64.exe</include>
                 </includes>
             </resource>
         </resources>
